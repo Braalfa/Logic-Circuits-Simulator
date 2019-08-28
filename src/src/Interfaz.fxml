@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="458.0" prefWidth="711.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <MenuBar prefHeight="0.0" prefWidth="634.0" style="-fx-background-color: #5689E8; -fx-text-fill: #FFFFFF;" VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" style="-fx-text-fill: #FFFFFF;" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="New" />
+            <MenuItem mnemonicParsing="false" text="Open…" />
+            <Menu mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" text="Save" />
+            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem mnemonicParsing="false" text="Revert" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" style="-fx-text-fill: #FFFFFF;" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Undo" />
+            <MenuItem mnemonicParsing="false" text="Redo" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Cut" />
+            <MenuItem mnemonicParsing="false" text="Copy" />
+            <MenuItem mnemonicParsing="false" text="Paste" />
+            <MenuItem mnemonicParsing="false" text="Delete" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Select All" />
+            <MenuItem mnemonicParsing="false" text="Unselect All" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" style="-fx-text-fill: #FFFFFF;" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+      <SplitPane dividerPositions="0.7288" prefHeight="458.0" prefWidth="711.0" style="-fx-background-color: #5C94FD;" VBox.vgrow="ALWAYS">
+        <items>
+          <AnchorPane minHeight="414.0" minWidth="462.0" prefHeight="414.0" prefWidth="462.0" style="-fx-background-color: #F8FAFF;">
+               <children>
+                  <Button layoutX="395.0" layoutY="334.0" mnemonicParsing="false" text="Guardar" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="8.0" />
+                  <Button layoutX="323.0" layoutY="334.0" mnemonicParsing="false" text="Simular" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="80.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
+               <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutY="56.0" maxHeight="500.0" maxWidth="500.0" prefHeight="317.0" prefWidth="170.0" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="56.0">
+                     <content>
+                        <VBox alignment="CENTER" maxHeight="1000.0" maxWidth="1000.0" minHeight="324.0" minWidth="155.0" prefHeight="324.0" prefWidth="160.0" style="-fx-background-color: #D6E2F9;" />
+                     </content>
+                  </ScrollPane>
+                  <Pane layoutX="-1.0" prefHeight="55.0" prefWidth="170.0" style="-fx-background-color: #9EBEF9;" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Separator layoutY="54.0" maxWidth="1000.0" prefHeight="2.0" prefWidth="500.0" style="-fx-background-color: #A2C0F7;" />
+                        <Label layoutX="27.0" layoutY="16.0" text="Componentes" textFill="WHITE">
+                           <font>
+                              <Font name="Georgia" size="19.0" />
+                           </font>
+                        </Label>
+                        <Separator layoutX="63.0" layoutY="-3.0" prefWidth="200.0" style="-fx-background-color: #A2C0F7;" />
+                     </children>
+                  </Pane>
+               </children>
+            </AnchorPane>
+        </items>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </SplitPane>
+  </children>
+</VBox>
