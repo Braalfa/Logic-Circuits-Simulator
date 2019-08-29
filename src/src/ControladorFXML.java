@@ -137,6 +137,14 @@ public class ControladorFXML {
                 boolean success = false;
                 if (db.hasString()) {
                     System.out.print("Dropped Succesful");
+                    String id= (String)db.getContent(DataFormat.PLAIN_TEXT);
+                    double xPos=event.getX();
+                    double yPos=event.getY();
+                    id = id.toUpperCase();
+                    Component component = Component_Factory.getComponent(ComponentType.valueOf(id));
+                    circuitPane.getChildren().add(component);
+                    component.setX(xPos);
+                    component.setY(yPos);
                 }
                 /* let the source know whether the string was successfully
                  * transferred and used */

@@ -1,10 +1,12 @@
+import javafx.scene.image.Image;
+
 import java.awt.*;
 
 public class XnorGate extends Component {
 
     public XnorGate() {
 
-        super(2,  new Point(67,16), new Point(1,10), new Point(1,22));
+        super(2,  new Point(67,16), new Point(1,10), new Point(1,22), new Image("imgs/xnor.png"));
     }
 
     @Override
