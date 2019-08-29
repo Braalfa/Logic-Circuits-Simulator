@@ -1,8 +1,10 @@
+import java.awt.*;
+
 public class NotGate extends Component {
 
     public NotGate() {
 
-        super(1, outputCoords, inputCoordsl, null);
+        super(1, new Point(73,16), new Point(1,16), null);
     }
 
     @Override
