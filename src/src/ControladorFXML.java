@@ -34,6 +34,8 @@ public class ControladorFXML {
 
     private ImageView componentSelected;
 
+    private double xOffSetDrag;
+    private double yOffSetDrag;
     public ControladorFXML(){
 
     }
@@ -74,7 +76,12 @@ public class ControladorFXML {
                 ClipboardContent content = new ClipboardContent();
                 content.putString(source.getId());
                 db.setContent(content);
+                db.setDragView(source.getImage());
+                db.setDragViewOffsetX(event.getX());
+                db.setDragViewOffsetY(event.getY());
 
+                xOffSetDrag= event.getX();
+                yOffSetDrag= event.getY();
                 event.consume();
             }
         });
@@ -143,8 +150,9 @@ public class ControladorFXML {
                     id = id.toUpperCase();
                     Component component = Component_Factory.getComponent(ComponentType.valueOf(id));
                     circuitPane.getChildren().add(component);
-                    component.setX(xPos);
-                    component.setY(yPos);
+                    component.setX(xPos-xOffSetDrag);
+                    component.setY(yPos-yOffSetDrag);
+                    success=true;
                 }
                 /* let the source know whether the string was successfully
                  * transferred and used */

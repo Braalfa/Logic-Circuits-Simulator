@@ -72,7 +72,7 @@
                                     <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </ImageView>
-                              <ImageView fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="272.0" pickOnBounds="true" preserveRatio="true" fx:id="xnor">
+                              <ImageView fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="272.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;" fx:id="xnor">
                                  <image>
                                     <Image url="@imgs/xnor.png" />
                                  </image>
