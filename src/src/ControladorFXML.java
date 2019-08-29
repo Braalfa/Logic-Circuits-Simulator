@@ -36,6 +36,10 @@ public class ControladorFXML {
 
     private double xOffSetDrag;
     private double yOffSetDrag;
+
+    private double componentOrgX;
+    private double componentOrgY;
+
     public ControladorFXML(){
 
     }
@@ -152,7 +156,9 @@ public class ControladorFXML {
                     circuitPane.getChildren().add(component);
                     component.setX(xPos-xOffSetDrag);
                     component.setY(yPos-yOffSetDrag);
+                    setMovementHandlers(component);
                     success=true;
+
                 }
                 /* let the source know whether the string was successfully
                  * transferred and used */
@@ -162,6 +168,24 @@ public class ControladorFXML {
             }
         });
 
+    }
+
+    public void setMovementHandlers(Component component) {
+
+        component.setOnMousePressed( new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                componentOrgX=-component.getX()+event.getSceneX();
+                componentOrgY=-component.getY()+event.getSceneY();
+            }
+        });
+        component.setOnMouseDragged( new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                component.setX(event.getX()-componentOrgX);
+                component.setY(event.getY()-componentOrgY);
+            }
+        });
     }
 
 }

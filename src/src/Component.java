@@ -22,6 +22,7 @@ abstract class Component extends ImageView{
         this.setFitHeight(32);
         this.setPreserveRatio(true);
         this.setCursor(Cursor.HAND);
+        this.setPickOnBounds(true);
     }
 
     abstract public boolean calculate();
