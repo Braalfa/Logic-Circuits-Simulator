@@ -21,7 +21,7 @@
                <children>
                   <ScrollPane layoutX="-1.0" layoutY="-2.0" prefHeight="458.0" prefWidth="523.0" style="-fx-background-color: #F8FAFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="-2.0">
                     <content>
-                      <AnchorPane fx:id="circuitoPanel" minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: #F8FAFF;" />
+                      <AnchorPane fx:id="circuitPane" minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: #F8FAFF;" />
                     </content>
                   </ScrollPane>
                </children>
@@ -30,9 +30,9 @@
                <children>
                   <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutY="56.0" maxHeight="500.0" maxWidth="500.0" prefHeight="324.0" prefWidth="180.0" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="56.0">
                      <content>
-                        <VBox fx:id="componentesVbox" alignment="CENTER" style="-fx-background-color: #D6E2F9;">
+                        <VBox fx:id="componentsVbox" alignment="CENTER" style="-fx-background-color: #D6E2F9;">
                            <children>
-                              <ImageView fx:id="not" fitHeight="32.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="not" fitHeight="32.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                                  <image>
                                     <Image url="@imgs/not.png" />
                                  </image>
@@ -40,7 +40,7 @@
                                     <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </ImageView>
-                              <ImageView fx:id="and" fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="168.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="and" fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="168.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                                  <image>
                                     <Image url="@imgs/and.png" />
                                  </image>
@@ -48,7 +48,7 @@
                                     <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </ImageView>
-                              <ImageView fx:id="nand" fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="nand" fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                                  <image>
                                     <Image url="@imgs/nand.png" />
                                  </image>
@@ -56,7 +56,7 @@
                                     <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </ImageView>
-                              <ImageView fx:id="nor" fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="220.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="nor" fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="220.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                                  <image>
                                     <Image url="@imgs/nor.png" />
                                  </image>
@@ -64,7 +64,7 @@
                                     <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </ImageView>
-                              <ImageView fx:id="or" fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="246.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="or" fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="246.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                                  <image>
                                     <Image url="@imgs/or.png" />
                                  </image>
@@ -80,7 +80,7 @@
                                     <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </ImageView>
-                              <ImageView fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="298.0" pickOnBounds="true" preserveRatio="true" fx:id="xor">
+                              <ImageView fitHeight="32.0" fitWidth="78.0" layoutX="54.0" layoutY="298.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;" fx:id="xor">
                                  <image>
                                     <Image url="@imgs/xor.png" />
                                  </image>
