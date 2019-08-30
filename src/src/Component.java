@@ -3,6 +3,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,10 +19,11 @@ abstract class Component extends ImageView{
     protected Label input1Label;
     protected Label input2Label;
     protected Label outputLabel;
+    private AnchorPane parent;
     private static int currentComponentInput=0;
     private static int currentComponentOutput=0;
-    private static ArrayList<Integer> unusedInputs= new ArrayList<>();
-    private static ArrayList<Integer> unusedOutputs= new ArrayList<>();
+    private static ArrayList<Integer> unusedInputs = new ArrayList<>();
+    private static ArrayList<Integer> unusedOutputs = new ArrayList<>();
 
     public Component(int inputs, Point outputCoords, Point inputCoordsl, Point inputCoords2, Image image){
         this.inputs=inputs;
@@ -33,17 +35,20 @@ abstract class Component extends ImageView{
         this.setPreserveRatio(true);
         this.setCursor(Cursor.HAND);
         this.setPickOnBounds(true);
+    }
 
+    protected void setLabels(){
+        this.parent=(AnchorPane) this.getParent();
         setInput1Label();
         setOutputLabel();
         if(inputs==2){
             setInput2Label();
         }
+        this.updateLabelPositions();
     }
 
-    public void setInput1Label() {
+    private void setInput1Label() {
         String text;
-        ((AnchorPane)(this.getParent())).getChildren().add(input1Label);
         if (unusedInputs.isEmpty()){
             text="i<"+currentComponentInput+">";
             currentComponentInput++;
@@ -52,14 +57,17 @@ abstract class Component extends ImageView{
             unusedInputs.remove(0);
         }
         this.input1Label = new Label(text);
-        this.input1Label.setLayoutX(inputCoordsl.getX());
-        this.input1Label.setLayoutY(inputCoordsl.getY());
+        input1Label.setFont(new Font("Facade",10));
+        input1Label.setStyle("-fx-background-color: #EFEFEF");
+        parent.getChildren().add(input1Label);
+        parent.applyCss();
+        parent.layout();
+        inputCoordsl.setLocation(inputCoordsl.getX()-input1Label.getWidth(),inputCoordsl.getY()-input1Label.getHeight()/2);
 
     }
 
-    public void setInput2Label() {
+    private void setInput2Label() {
         String text;
-        ((AnchorPane)(this.getParent())).getChildren().add(input2Label);
         if (unusedInputs.isEmpty()){
             text="i<"+currentComponentInput+">";
             currentComponentInput++;
@@ -68,23 +76,43 @@ abstract class Component extends ImageView{
             unusedInputs.remove(0);
         }
         this.input2Label = new Label(text);
-        this.input2Label.setLayoutX(inputCoords2.getX());
-        this.input2Label.setLayoutY(inputCoords2.getY());
+        input2Label.setFont(new Font("Facade",10));
+        input2Label.setStyle("-fx-background-color: #EFEFEF");
+        parent.getChildren().add(input2Label);
+        parent.applyCss();
+        parent.layout();
+        inputCoords2.setLocation(inputCoords2.getX()-input2Label.getWidth(),inputCoords2.getY()-input2Label.getHeight()/2);
+
     }
 
     public void setOutputLabel() {
         String text;
         if (unusedOutputs.isEmpty()){
-            text="i<"+currentComponentOutput+">";
+            text="o<"+currentComponentOutput+">";
             currentComponentOutput++;
         }else{
-            text="i<"+unusedOutputs.get(0)+">";
+            text="o<"+unusedOutputs.get(0)+">";
             unusedOutputs.remove(0);
         }
-        ((AnchorPane) (this.getParent())).getChildren().add(outputLabel);
-        this.outputLabel = new Label(text);
-        this.outputLabel.setLayoutX(outputCoords.getX());
-        this.outputLabel.setLayoutY(outputCoords.getY());
+        outputLabel = new Label(text);
+        outputLabel.setFont(new Font("Facade",10));
+        outputLabel.setStyle("-fx-background-color: #EFEFEF");
+        parent.getChildren().add(outputLabel);
+        parent.applyCss();
+        parent.layout();
+        outputCoords.setLocation(outputCoords.getX(),outputCoords.getY()-outputLabel.getHeight()/2);
+
+    }
+
+    public void updateLabelPositions(){
+        outputLabel.setLayoutX(outputCoords.getX()+this.getX());
+        outputLabel.setLayoutY(outputCoords.getY()+this.getY());
+
+        input2Label.setLayoutX(inputCoords2.getX()+this.getX());
+        input2Label.setLayoutY(inputCoords2.getY()+this.getY());
+
+        input1Label.setLayoutX(inputCoordsl.getX()+this.getX());
+        input1Label.setLayoutY(inputCoordsl.getY()+this.getY());
     }
     abstract public boolean calculate();
 }
