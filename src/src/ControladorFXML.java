@@ -95,7 +95,6 @@ public class ControladorFXML {
                 /* the drag and drop gesture ended */
                 /* if the data was successfully moved, clear it */
                 if (event.getTransferMode() == TransferMode.MOVE) {
-                    System.out.print("Success Received");
                 }
                 event.consume();
             }
@@ -111,7 +110,6 @@ public class ControladorFXML {
                         event.getDragboard().hasString()) {
                     /* allow for both copying and moving, whatever user chooses */
                     event.acceptTransferModes(TransferMode.COPY);
-                    System.out.print("Drop is possible");
                 }
 
                 event.consume();
@@ -124,7 +122,6 @@ public class ControladorFXML {
                 /* show to the user that it is an actual gesture target */
                 if (event.getGestureSource() != circuitPane &&
                         event.getDragboard().hasString()) {
-                    System.out.print("Entered Drag Zone");
                 }
 
                 event.consume();
@@ -134,7 +131,6 @@ public class ControladorFXML {
         circuitPane.setOnDragExited(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
                 /* mouse moved away, remove the graphical cues */
-                System.out.print("Left Drag Zone");
 
                 event.consume();
             }
@@ -147,7 +143,6 @@ public class ControladorFXML {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasString()) {
-                    System.out.print("Dropped Succesful");
                     String id= (String)db.getContent(DataFormat.PLAIN_TEXT);
                     double xPos=event.getX();
                     double yPos=event.getY();

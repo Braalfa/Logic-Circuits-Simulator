@@ -1,3 +1,5 @@
+import javafx.scene.layout.Pane;
+
 public class Component_Factory {
     public static Component getComponent(ComponentType c){
         switch (c){
