@@ -8,6 +8,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 public class ControladorFXML {
 
@@ -33,6 +34,7 @@ public class ControladorFXML {
     private AnchorPane circuitPane;
 
     private ImageView componentSelected;
+    private ArrayList<Nodo> nodos;
 
     private double xOffSetDrag;
     private double yOffSetDrag;
@@ -53,6 +55,7 @@ public class ControladorFXML {
 
         }
         setUpDrop();
+        nodos=new ArrayList<>();
     }
 
     public void handleClickComponents(ImageView source) {
@@ -147,10 +150,15 @@ public class ControladorFXML {
                     double xPos=event.getX();
                     double yPos=event.getY();
                     id = id.toUpperCase();
+
                     Component component = Component_Factory.getComponent(ComponentType.valueOf(id));
                     circuitPane.getChildren().add(component);
                     component.setX(xPos-xOffSetDrag);
                     component.setY(yPos-yOffSetDrag);
+
+                    Nodo nodo= new Nodo(component);
+                    nodos.add(nodo);
+
                     setMovementHandlers(component);
                     component.setUpLabels();
                     success=true;

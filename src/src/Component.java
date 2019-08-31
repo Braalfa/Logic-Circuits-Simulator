@@ -14,14 +14,13 @@ abstract class Component extends ImageView{
     private Point outputCoords;
     private Point inputCoordsl;
     private Point inputCoords2;
+    private static int nextid=0;
     protected boolean input1;
     protected boolean input2;
     protected boolean output;
     protected OutputTag outputTag;
     protected InputTag inputTag1;
     protected InputTag inputTag2;
-
-
 
     public Component(int inputs, Point outputCoords, Point inputCoordsl, Point inputCoords2, Image image){
         this.inputs=inputs;
@@ -33,6 +32,8 @@ abstract class Component extends ImageView{
         this.setPreserveRatio(true);
         this.setCursor(Cursor.HAND);
         this.setPickOnBounds(true);
+        this.setId("comp"+nextid);
+        nextid++;
     }
 
     protected void setUpLabels(){
