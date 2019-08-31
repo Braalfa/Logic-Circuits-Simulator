@@ -152,7 +152,7 @@ public class ControladorFXML {
                     component.setX(xPos-xOffSetDrag);
                     component.setY(yPos-yOffSetDrag);
                     setMovementHandlers(component);
-                    component.setLabels();
+                    component.setUpLabels();
                     success=true;
                 }
                 /* let the source know whether the string was successfully
@@ -179,7 +179,7 @@ public class ControladorFXML {
             public void handle(MouseEvent event) {
                 component.setX(event.getX()-componentOrgX);
                 component.setY(event.getY()-componentOrgY);
-                component.updateLabelPositions();
+                component.updateTagsPositions();
             }
         });
 
