@@ -6,7 +6,7 @@ import java.awt.*;
 public class NandGate extends Component {
 
     public NandGate() {
-        super(2,  new Point(72,16), new Point(1,12), new Point(1,27), new Image("imgs/nand.png"));
+        super(2,  new Point(72,16), new Point(0,8), new Point(0,25), new Image("imgs/nand.png"));
     }
 
     @Override

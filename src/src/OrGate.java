@@ -7,7 +7,7 @@ public class OrGate extends Component {
 
     public OrGate() {
 
-        super(2,  new Point(51,17), new Point(1,10), new Point(1,24), new Image("imgs/or.png"));
+        super(2,  new Point(51,17), new Point(0,10), new Point(0,23), new Image("imgs/or.png"));
     }
 
     @Override
