@@ -19,7 +19,7 @@ public class InputTag extends Tag {
             unusedIds.remove(0);
         }
         this.display(text);
-        coords.setLocation(coords.getX()-this.getWidth(),coords.getY()-this.getHeight()/2);
+        this.coords.setLocation(coords.getX()-this.getWidth(),coords.getY()-this.getHeight()/2);
 
     }
 
