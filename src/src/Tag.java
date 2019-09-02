@@ -322,7 +322,7 @@ public abstract class Tag extends Label {
     private int getDownLimit( int posX){
         int limY=(int) parent.getHeight();
         for(Bounds bound: bounds){
-            if(bound.getMinX()<=posX && bound.getMaxY()>=posX){
+            if(bound.getMinX()<=posX && bound.getMaxX()>=posX){
                 if(limY>bound.getMinY()){
                     limY= (int) bound.getMinY();
                 }
@@ -333,7 +333,7 @@ public abstract class Tag extends Label {
     private int getUpLimit(int posX){
         int limY=0;
         for(Bounds bound: bounds){
-            if(bound.getMinX()<=posX && bound.getMaxY()>=posX){
+            if(bound.getMinX()<=posX && bound.getMaxX()>=posX){
                 if(limY<bound.getMaxY()){
                     limY= (int) bound.getMaxY();
                 }
