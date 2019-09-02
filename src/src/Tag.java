@@ -22,6 +22,7 @@ public abstract class Tag extends Label {
     private boolean onDrag;
     private double relClickX;
     private double relClickY;
+    private Tag nextTag;
 
     public Tag(AnchorPane parent, Point nodCoords, Component component){
         this.coords=new Point((int)nodCoords.getX(),(int)nodCoords.getY());
@@ -106,25 +107,30 @@ public abstract class Tag extends Label {
         });
         this.setOnMouseReleased( new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
-                System.out.print("Released");
                 Tag source= (Tag)event.getSource();
-                source.setLayoutX(event.getSceneX()-relClickX);
-                source.setLayoutY(event.getSceneY()-relClickY);
                 Line thisLine= lines.get(lines.size()-1);
-                if(thisLine.getStartX()>thisLine.getEndX()){
-                    source.setLayoutX(thisLine.getEndX()-source.getWidth());
-                    source.setLayoutY(thisLine.getEndY()-source.getHeight()/2);
-                }else if(thisLine.getStartX()<thisLine.getEndX()){
-                    source.setLayoutX(thisLine.getEndX());
-                    source.setLayoutY(thisLine.getEndY()-source.getHeight()/2);
-                }else if(thisLine.getStartY()>thisLine.getEndY()){
-                    source.setLayoutX(thisLine.getEndX()-source.getWidth()/2);
-                    source.setLayoutY(thisLine.getEndY()-source.getHeight());
-                }else if(thisLine.getStartY()<thisLine.getEndY()){
-                    source.setLayoutX(thisLine.getEndX()-source.getWidth()/2);
-                    source.setLayoutY(thisLine.getEndY());
+                Tag overlap = source.getOverlap();
+                if(overlap==null) {
+                    if (thisLine.getStartX() > thisLine.getEndX()) {
+                        source.setLayoutX(thisLine.getEndX() - source.getWidth());
+                        source.setLayoutY(thisLine.getEndY() - source.getHeight() / 2);
+                    } else if (thisLine.getStartX() < thisLine.getEndX()) {
+                        source.setLayoutX(thisLine.getEndX());
+                        source.setLayoutY(thisLine.getEndY() - source.getHeight() / 2);
+                    } else if (thisLine.getStartY() > thisLine.getEndY()) {
+                        source.setLayoutX(thisLine.getEndX() - source.getWidth() / 2);
+                        source.setLayoutY(thisLine.getEndY() - source.getHeight());
+                    } else if (thisLine.getStartY() < thisLine.getEndY()) {
+                        source.setLayoutX(thisLine.getEndX() - source.getWidth() / 2);
+                        source.setLayoutY(thisLine.getEndY());
+                    }
+                }else{
+                    source.setLayoutX(overlap.getNodCords().getX()+overlap.getComponent().getX());
+                    source.setLayoutY(overlap.getNodCords().getY()+overlap.getComponent().getY());
+                    source.setVisible(false);
+                    overlap.setVisible(false);
+                    nextTag=overlap;
                 }
-
                 event.consume();
 
             }
@@ -153,9 +159,132 @@ public abstract class Tag extends Label {
     }
 
     private Tag getOverlap(){
-        
+        ObservableList<Node> nodos=parent.getChildren();
+        Tag overlap=null;
+        for(Node nodo:nodos){
+            if(nodo instanceof Tag && !nodo.getClass().equals(this.getClass())){
+                if(nodo.getBoundsInParent().intersects(this.getBoundsInParent())){
+                    overlap=(Tag)nodo;
+                    break;
+                }
+            }
+        }
+        return overlap;
     }
 
+    private void autoConnect(Tag start, Tag end){
+        Point startPoint=start.getNodCords();
+        Point endPoint = end.getNodCords();
+        int startMovementX= (int)start.getComponent().getX();
+        int startMovementY= (int)start.getComponent().getY();
+        int endMovementX= (int)end.getComponent().getX();
+        int endMovemenY= (int)end.getComponent().getY();
+            Line[] lines=null;
+            int linesIndex=1;
+            while(lines==null){
+                lines=this.createPath(linesIndex, linesIndex, (int)startPoint.getX()+startMovementX,
+                        (int)startPoint.getY()+startMovementY,(int)endPoint.getX()+endMovementX,(int)endPoint.getY()+endMovemenY, 1, start,end);
+                if (lines==null) {
+                    lines = this.createPath(linesIndex, linesIndex, (int)startPoint.getX()+startMovementX,
+                            (int)startPoint.getY()+startMovementY,(int)endPoint.getX()+endMovementX,(int)endPoint.getY()+endMovemenY, -1, start,end);
+                }
+                System.out.print(lines);
+                linesIndex++;
+            }
+        for(Line line:lines){
+            line.setVisible(true);
+            this.lines.add(line);
+        }
+    }
+
+    public Line[] createPath(int numberlines, int orgLines, int ax, int ay, int bx, int by, int direction, Tag start, Tag end ) {
+        if (numberlines == 1) {
+            if (ax == bx || by == ay) {
+                Line[] result = new Line[orgLines];
+                Line line= this.createLine(ax, ay, bx, by);
+                if (!this.overlaps(line,start, end)) {
+                    result[orgLines-numberlines]=line;
+                    return result;
+                }else{
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } else {
+            Line[] lines = null;
+            int middle;
+            boolean done1 = false;
+            boolean done2 = false;
+            int limX = (int)parent.getWidth();
+            int limY = (int)parent.getHeight();
+            int iterator = 0;
+            Line line = null;
+            if (direction == 1) {
+                middle = (by - ay) / 2;
+                while (lines == null && !done1 && !done2) {
+                    if (ay + middle + iterator < limY) {
+                        parent.getChildren().remove(line);
+                        line = this.createLine(ax, ay, ax, ay + middle + iterator);
+                        if (!this.overlaps(line,start, end)) {
+                            lines = createPath(numberlines - 1, orgLines, ax, ay + middle + iterator, bx, by, -1, start, end);
+                        }
+                    } else{
+                        done1=true;
+                    }
+                    if (lines == null && (ay + middle - iterator > 0)) {
+                        parent.getChildren().remove(line);
+                        line = this.createLine(ax, ay, ax, ay + middle - iterator);
+                        if (!this.overlaps(line,start, end)) {
+                            lines = createPath(numberlines - 1, orgLines, ax, ay + middle - iterator, bx, by, -1,start, end);
+                        }
+                    } else {
+                        done2 = true;
+                    }
+                    iterator+=1;
+                }
+            } else {
+                middle = (bx - ax) / 2;
+                while (lines == null && !done1 && !done2) {
+                    if (ax + middle + iterator < limX) {
+                        parent.getChildren().remove(line);
+                        line = this.createLine(ax, ay, ax + middle + iterator, ay);
+                        if (!this.overlaps(line, start, end)) {
+                            lines = createPath(numberlines - 1, orgLines, ax + middle + iterator, ay, bx, by, 1, start, end);
+                        }
+                    } else {
+                        done1 = true;
+                    }
+                    if (lines == null && (ax + middle - iterator > 0)) {
+                        parent.getChildren().remove(line);
+                        line = this.createLine(ax, ay, ax + middle - iterator, ay);
+
+                        if (!this.overlaps(line, start, end)) {
+                            lines = createPath(numberlines - 1, orgLines, ax + middle - iterator, ay, bx, by, 1, start, end);
+                        }
+                    } else {
+                        done2 = true;
+                    }
+                    iterator += 1;
+                }
+            }
+            if (lines != null) {
+                lines[orgLines - numberlines] = line;
+            } else {
+                parent.getChildren().remove(line);
+            }
+            return lines;
+        }
+    }
+    private Line createLine(double ax, double ay, double bx, double by){
+        Line line = new Line();
+        line.setStartX(ax);
+        line.setStartY(ay);
+        line.setEndX(bx);
+        line.setEndY(by);
+        parent.getChildren().add(line);
+        return line;
+    }
     private ArrayList<Bounds> explore(Tag start,Tag end){
         ObservableList<javafx.scene.Node> nodes=parent.getChildren();
         ArrayList<Bounds> bounds= new ArrayList<>();
