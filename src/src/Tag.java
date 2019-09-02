@@ -23,6 +23,7 @@ public abstract class Tag extends Label {
     private double relClickX;
     private double relClickY;
     private Tag nextTag;
+    private ArrayList<Bounds> bounds;
 
     public Tag(AnchorPane parent, Point nodCoords, Component component){
         this.coords=new Point((int)nodCoords.getX(),(int)nodCoords.getY());
@@ -125,13 +126,11 @@ public abstract class Tag extends Label {
                         source.setLayoutY(thisLine.getEndY());
                     }
                 }else{
-                    source.setLayoutX(overlap.getNodCords().getX()+overlap.getComponent().getX());
-                    source.setLayoutY(overlap.getNodCords().getY()+overlap.getComponent().getY());
                     source.setVisible(false);
                     overlap.setVisible(false);
+                    autoConnect(source,overlap);
                     nextTag=overlap;
                 }
-                event.consume();
 
             }
         });
@@ -172,29 +171,27 @@ public abstract class Tag extends Label {
         return overlap;
     }
 
-    private void autoConnect(Tag start, Tag end){
-        Point startPoint=start.getNodCords();
-        Point endPoint = end.getNodCords();
-        int startMovementX= (int)start.getComponent().getX();
-        int startMovementY= (int)start.getComponent().getY();
-        int endMovementX= (int)end.getComponent().getX();
-        int endMovemenY= (int)end.getComponent().getY();
-            Line[] lines=null;
-            int linesIndex=1;
-            while(lines==null){
-                lines=this.createPath(linesIndex, linesIndex, (int)startPoint.getX()+startMovementX,
-                        (int)startPoint.getY()+startMovementY,(int)endPoint.getX()+endMovementX,(int)endPoint.getY()+endMovemenY, 1, start,end);
-                if (lines==null) {
-                    lines = this.createPath(linesIndex, linesIndex, (int)startPoint.getX()+startMovementX,
-                            (int)startPoint.getY()+startMovementY,(int)endPoint.getX()+endMovementX,(int)endPoint.getY()+endMovemenY, -1, start,end);
-                }
-                System.out.print(lines);
-                linesIndex++;
+    private void autoConnect(Tag start, Tag end) {
+        Point startPoint = start.getLastLinePoint();
+        Point endPoint = end.getLastLinePoint();
+        this.removeLastLine();
+        Line[] lines = null;
+        int linesIndex = 1;
+        this.updateBounds(start,end);
+        while (lines == null) {
+            lines = this.createPath(linesIndex, linesIndex, (int) startPoint.getX() ,
+                    (int) startPoint.getY() , (int) endPoint.getX() , (int) endPoint.getY() , 1, start, end);
+            if (lines == null) {
+                lines = this.createPath(linesIndex, linesIndex, (int) startPoint.getX() ,
+                        (int) startPoint.getY() , (int) endPoint.getX() , (int) endPoint.getY() , -1, start, end);
             }
-        for(Line line:lines){
-            line.setVisible(true);
-            this.lines.add(line);
+            linesIndex++;
+            System.out.print(linesIndex+"\n");
         }
+        for (Line line : lines) {
+            line.setVisible(true);
+        }
+
     }
 
     public Line[] createPath(int numberlines, int orgLines, int ax, int ay, int bx, int by, int direction, Tag start, Tag end ) {
@@ -206,6 +203,7 @@ public abstract class Tag extends Label {
                     result[orgLines-numberlines]=line;
                     return result;
                 }else{
+                    parent.getChildren().remove(line);
                     return null;
                 }
             } else {
@@ -216,14 +214,16 @@ public abstract class Tag extends Label {
             int middle;
             boolean done1 = false;
             boolean done2 = false;
-            int limX = (int)parent.getWidth();
-            int limY = (int)parent.getHeight();
+            int lim1 = this.getDownLimit(ax);
+            int lim2 = this.getUpLimit(ax);
+            int lim3 = this.getRigthLimit(ay);
+            int lim4 = this.getLeftLimit(ay);
             int iterator = 0;
             Line line = null;
             if (direction == 1) {
                 middle = (by - ay) / 2;
                 while (lines == null && !done1 && !done2) {
-                    if (ay + middle + iterator < limY) {
+                    if (ay + middle + iterator < lim1) {
                         parent.getChildren().remove(line);
                         line = this.createLine(ax, ay, ax, ay + middle + iterator);
                         if (!this.overlaps(line,start, end)) {
@@ -232,7 +232,7 @@ public abstract class Tag extends Label {
                     } else{
                         done1=true;
                     }
-                    if (lines == null && (ay + middle - iterator > 0)) {
+                    if (lines == null && (ay + middle - iterator > lim2)) {
                         parent.getChildren().remove(line);
                         line = this.createLine(ax, ay, ax, ay + middle - iterator);
                         if (!this.overlaps(line,start, end)) {
@@ -246,7 +246,7 @@ public abstract class Tag extends Label {
             } else {
                 middle = (bx - ax) / 2;
                 while (lines == null && !done1 && !done2) {
-                    if (ax + middle + iterator < limX) {
+                    if (ax + middle + iterator < lim3) {
                         parent.getChildren().remove(line);
                         line = this.createLine(ax, ay, ax + middle + iterator, ay);
                         if (!this.overlaps(line, start, end)) {
@@ -255,7 +255,7 @@ public abstract class Tag extends Label {
                     } else {
                         done1 = true;
                     }
-                    if (lines == null && (ax + middle - iterator > 0)) {
+                    if (lines == null && (ax + middle - iterator > lim4)) {
                         parent.getChildren().remove(line);
                         line = this.createLine(ax, ay, ax + middle - iterator, ay);
 
@@ -285,19 +285,19 @@ public abstract class Tag extends Label {
         parent.getChildren().add(line);
         return line;
     }
-    private ArrayList<Bounds> explore(Tag start,Tag end){
+    private void updateBounds(Tag start,Tag end){
         ObservableList<javafx.scene.Node> nodes=parent.getChildren();
         ArrayList<Bounds> bounds= new ArrayList<>();
         for(Node node: nodes){
             if ((node instanceof Component) && (node!= start.getComponent() && node!=end.getComponent())){
-                bounds.add(node.getLayoutBounds());
+                bounds.add(node.getBoundsInParent());
             }
         }
-        return bounds;
+        this.bounds=bounds;
 
     }
 
-    private int getRigthLimit(ArrayList<Bounds> bounds, int posY){
+    private int getRigthLimit(int posY){
         int limX=(int) parent.getWidth();
         for(Bounds bound: bounds){
             if(bound.getMinY()<=posY && bound.getMaxY()>=posY){
@@ -308,7 +308,7 @@ public abstract class Tag extends Label {
         }
         return limX;
     }
-    private int getLeftLimit(ArrayList<Bounds> bounds, int posY){
+    private int getLeftLimit( int posY){
         int limX=0;
         for(Bounds bound: bounds){
             if(bound.getMinY()<=posY && bound.getMaxY()>=posY){
@@ -319,8 +319,7 @@ public abstract class Tag extends Label {
         }
         return limX;
     }
-
-    private int getDownLimit(ArrayList<Bounds> bounds, int posX){
+    private int getDownLimit( int posX){
         int limY=(int) parent.getHeight();
         for(Bounds bound: bounds){
             if(bound.getMinX()<=posX && bound.getMaxY()>=posX){
@@ -331,8 +330,7 @@ public abstract class Tag extends Label {
         }
         return limY;
     }
-
-    private int getUpLimit(ArrayList<Bounds> bounds, int posX){
+    private int getUpLimit(int posX){
         int limY=0;
         for(Bounds bound: bounds){
             if(bound.getMinX()<=posX && bound.getMaxY()>=posX){
@@ -350,6 +348,21 @@ public abstract class Tag extends Label {
 
     private Component getComponent(){
         return this.component;
+    }
+
+    private void removeLastLine(){
+        Line line= lines.get(lines.size()-1);
+        parent.getChildren().remove(line);
+        lines.remove(line);
+    }
+
+    private Point getLastLinePoint(){
+        if(this.lines.isEmpty() || lines.size()==1 ){
+            return new Point((int)(nodCoords.getX()+component.getX()),(int)(nodCoords.getY()+component.getY()));
+        }else{
+            Line lastLine= lines.get(lines.size()-2);
+            return new Point((int)lastLine.getEndX(),(int)lastLine.getEndY());
+        }
     }
 
 }
