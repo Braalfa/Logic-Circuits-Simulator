@@ -23,6 +23,11 @@ public abstract class Tag extends Label {
     private double relClickX;
     private double relClickY;
     private Tag nextTag;
+
+    public void setNextTag(Tag nextTag) {
+        this.nextTag = nextTag;
+    }
+
     private ArrayList<Bounds> bounds;
 
     public Tag(AnchorPane parent, Point nodCoords, Component component){
@@ -112,28 +117,39 @@ public abstract class Tag extends Label {
                 Line thisLine= lines.get(lines.size()-1);
                 Tag overlap = source.getOverlap();
                 if(overlap==null) {
-                    if (thisLine.getStartX() > thisLine.getEndX()) {
-                        source.setLayoutX(thisLine.getEndX() - source.getWidth());
-                        source.setLayoutY(thisLine.getEndY() - source.getHeight() / 2);
-                    } else if (thisLine.getStartX() < thisLine.getEndX()) {
-                        source.setLayoutX(thisLine.getEndX());
-                        source.setLayoutY(thisLine.getEndY() - source.getHeight() / 2);
-                    } else if (thisLine.getStartY() > thisLine.getEndY()) {
-                        source.setLayoutX(thisLine.getEndX() - source.getWidth() / 2);
-                        source.setLayoutY(thisLine.getEndY() - source.getHeight());
-                    } else if (thisLine.getStartY() < thisLine.getEndY()) {
-                        source.setLayoutX(thisLine.getEndX() - source.getWidth() / 2);
-                        source.setLayoutY(thisLine.getEndY());
-                    }
+                    source.uptadeDisplacedTag(thisLine);
                 }else{
-                    source.setVisible(false);
-                    overlap.setVisible(false);
-                    autoConnect(source,overlap);
-                    nextTag=overlap;
+                    if(overlap instanceof InputTag && !overlap.hasNextTag()){
+                        source.setVisible(false);
+                        overlap.setVisible(false);
+                        ConnectorSingleton connector= ConnectorSingleton.getInstance(source,overlap);
+                        connector.autoConnect(source,overlap);
+                        nextTag=overlap;
+                    }else{
+                        lines.remove(thisLine);
+                        thisLine= lines.get(lines.size()-1);
+                        source.uptadeDisplacedTag(thisLine);
+                    }
                 }
 
             }
         });
+    }
+
+    public void uptadeDisplacedTag(Line thisLine){
+        if (thisLine.getStartX() > thisLine.getEndX()) {
+            this.setLayoutX(thisLine.getEndX() - this.getWidth());
+            this.setLayoutY(thisLine.getEndY() - this.getHeight() / 2);
+        } else if (thisLine.getStartX() < thisLine.getEndX()) {
+            this.setLayoutX(thisLine.getEndX());
+            this.setLayoutY(thisLine.getEndY() - this.getHeight() / 2);
+        } else if (thisLine.getStartY() > thisLine.getEndY()) {
+            this.setLayoutX(thisLine.getEndX() - this.getWidth() / 2);
+            this.setLayoutY(thisLine.getEndY() - this.getHeight());
+        } else if (thisLine.getStartY() < thisLine.getEndY()) {
+            this.setLayoutX(thisLine.getEndX() - this.getWidth() / 2);
+            this.setLayoutY(thisLine.getEndY());
+        }
     }
 
     public void updateTagPosition(){
@@ -157,7 +173,7 @@ public abstract class Tag extends Label {
 
     }
 
-    private Tag getOverlap(){
+    public Tag getOverlap(){
         ObservableList<Node> nodos=parent.getChildren();
         Tag overlap=null;
         for(Node nodo:nodos){
@@ -170,198 +186,35 @@ public abstract class Tag extends Label {
         }
         return overlap;
     }
-
-    private void autoConnect(Tag start, Tag end) {
-        Point startPoint = start.getLastLinePoint();
-        Point endPoint = end.getLastLinePoint();
-        this.removeLastLine();
-        Line[] lines = null;
-        int linesIndex = 1;
-        this.updateBounds(start,end);
-        while (lines == null) {
-            lines = this.createPath(linesIndex, linesIndex, (int) startPoint.getX() ,
-                    (int) startPoint.getY() , (int) endPoint.getX() , (int) endPoint.getY() , 1, start, end);
-            if (lines == null) {
-                lines = this.createPath(linesIndex, linesIndex, (int) startPoint.getX() ,
-                        (int) startPoint.getY() , (int) endPoint.getX() , (int) endPoint.getY() , -1, start, end);
-            }
-            linesIndex++;
-            System.out.print(linesIndex+"\n");
-        }
-        for (Line line : lines) {
-            line.setVisible(true);
-        }
-
-    }
-
-    public Line[] createPath(int numberlines, int orgLines, int ax, int ay, int bx, int by, int direction, Tag start, Tag end ) {
-        if (numberlines == 1) {
-            if (ax == bx || by == ay) {
-                Line[] result = new Line[orgLines];
-                Line line= this.createLine(ax, ay, bx, by);
-                if (!this.overlaps(line,start, end)) {
-                    result[orgLines-numberlines]=line;
-                    return result;
-                }else{
-                    parent.getChildren().remove(line);
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        } else {
-            Line[] lines = null;
-            int middle;
-            boolean done1 = false;
-            boolean done2 = false;
-            int lim1 = this.getDownLimit(ax);
-            int lim2 = this.getUpLimit(ax);
-            int lim3 = this.getRigthLimit(ay);
-            int lim4 = this.getLeftLimit(ay);
-            int iterator = 0;
-            Line line = null;
-            if (direction == 1) {
-                middle = (by - ay) / 2;
-                while (lines == null && !done1 && !done2) {
-                    if (ay + middle + iterator < lim1) {
-                        parent.getChildren().remove(line);
-                        line = this.createLine(ax, ay, ax, ay + middle + iterator);
-                        if (!this.overlaps(line,start, end)) {
-                            lines = createPath(numberlines - 1, orgLines, ax, ay + middle + iterator, bx, by, -1, start, end);
-                        }
-                    } else{
-                        done1=true;
-                    }
-                    if (lines == null && (ay + middle - iterator > lim2)) {
-                        parent.getChildren().remove(line);
-                        line = this.createLine(ax, ay, ax, ay + middle - iterator);
-                        if (!this.overlaps(line,start, end)) {
-                            lines = createPath(numberlines - 1, orgLines, ax, ay + middle - iterator, bx, by, -1,start, end);
-                        }
-                    } else {
-                        done2 = true;
-                    }
-                    iterator+=1;
-                }
-            } else {
-                middle = (bx - ax) / 2;
-                while (lines == null && !done1 && !done2) {
-                    if (ax + middle + iterator < lim3) {
-                        parent.getChildren().remove(line);
-                        line = this.createLine(ax, ay, ax + middle + iterator, ay);
-                        if (!this.overlaps(line, start, end)) {
-                            lines = createPath(numberlines - 1, orgLines, ax + middle + iterator, ay, bx, by, 1, start, end);
-                        }
-                    } else {
-                        done1 = true;
-                    }
-                    if (lines == null && (ax + middle - iterator > lim4)) {
-                        parent.getChildren().remove(line);
-                        line = this.createLine(ax, ay, ax + middle - iterator, ay);
-
-                        if (!this.overlaps(line, start, end)) {
-                            lines = createPath(numberlines - 1, orgLines, ax + middle - iterator, ay, bx, by, 1, start, end);
-                        }
-                    } else {
-                        done2 = true;
-                    }
-                    iterator += 1;
-                }
-            }
-            if (lines != null) {
-                lines[orgLines - numberlines] = line;
-            } else {
-                parent.getChildren().remove(line);
-            }
-            return lines;
-        }
-    }
-    private Line createLine(double ax, double ay, double bx, double by){
-        Line line = new Line();
-        line.setStartX(ax);
-        line.setStartY(ay);
-        line.setEndX(bx);
-        line.setEndY(by);
-        parent.getChildren().add(line);
-        return line;
-    }
-    private void updateBounds(Tag start,Tag end){
-        ObservableList<javafx.scene.Node> nodes=parent.getChildren();
-        ArrayList<Bounds> bounds= new ArrayList<>();
-        for(Node node: nodes){
-            if ((node instanceof Component) && (node!= start.getComponent() && node!=end.getComponent())){
-                bounds.add(node.getBoundsInParent());
-            }
-        }
-        this.bounds=bounds;
-
-    }
-
-    private int getRigthLimit(int posY){
-        int limX=(int) parent.getWidth();
-        for(Bounds bound: bounds){
-            if(bound.getMinY()<=posY && bound.getMaxY()>=posY){
-                if(limX>bound.getMinX()){
-                    limX= (int) bound.getMinX();
-                }
-            }
-        }
-        return limX;
-    }
-    private int getLeftLimit( int posY){
-        int limX=0;
-        for(Bounds bound: bounds){
-            if(bound.getMinY()<=posY && bound.getMaxY()>=posY){
-                if(limX<bound.getMaxX()){
-                    limX= (int) bound.getMinX();
-                }
-            }
-        }
-        return limX;
-    }
-    private int getDownLimit( int posX){
-        int limY=(int) parent.getHeight();
-        for(Bounds bound: bounds){
-            if(bound.getMinX()<=posX && bound.getMaxX()>=posX){
-                if(limY>bound.getMinY()){
-                    limY= (int) bound.getMinY();
-                }
-            }
-        }
-        return limY;
-    }
-    private int getUpLimit(int posX){
-        int limY=0;
-        for(Bounds bound: bounds){
-            if(bound.getMinX()<=posX && bound.getMaxX()>=posX){
-                if(limY<bound.getMaxY()){
-                    limY= (int) bound.getMaxY();
-                }
-            }
-        }
-        return limY;
-    }
-
+    
     private Point getNodCords(){
         return this.nodCoords;
     }
 
-    private Component getComponent(){
+    public Component getComponent(){
         return this.component;
     }
 
-    private void removeLastLine(){
+    public void removeLastLine(){
         Line line= lines.get(lines.size()-1);
         parent.getChildren().remove(line);
         lines.remove(line);
     }
 
-    private Point getLastLinePoint(){
+    public Point getLastLinePoint(){
         if(this.lines.isEmpty() || lines.size()==1 ){
             return new Point((int)(nodCoords.getX()+component.getX()),(int)(nodCoords.getY()+component.getY()));
         }else{
             Line lastLine= lines.get(lines.size()-2);
             return new Point((int)lastLine.getEndX(),(int)lastLine.getEndY());
+        }
+    }
+
+    public boolean hasNextTag(){
+        if (this.nextTag!=null){
+            return true;
+        }else{
+            return false;
         }
     }
 
