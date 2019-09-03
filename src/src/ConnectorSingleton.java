@@ -30,24 +30,26 @@ public class ConnectorSingleton {
         return instance;
     }
 
-    private void updateBounds(Tag start,Tag end){
+    private void updateBounds(){
         ObservableList<Node> nodes=parent.getChildren();
         ArrayList<Bounds> bounds= new ArrayList<>();
         for(Node node: nodes){
-            if ((node instanceof Component) && (node!= start.getComponent() && node!=end.getComponent())){
+            if ((node instanceof Component) && (node!= startTag.getComponent() && node!=endTag.getComponent())){
                 bounds.add(node.getBoundsInParent());
             }
         }
         this.bounds=bounds;
 
     }
-    public boolean autoConnect(Tag start, Tag end) {
+    public boolean autoConnect() {
+        Tag start= startTag;
+        Tag end= endTag;
         Point startPoint = start.getLastLineStartPoint();
         Point endPoint = end.getLastLineEndPoint();
         start.removeLastLine();
         Line[] lines = null;
         int linesIndex = 1;
-        this.updateBounds(start,end);
+        this.updateBounds();
         long timeStart=java.lang.System.currentTimeMillis();
         long currentTime=timeStart;
         boolean outOfTime=false;
@@ -66,8 +68,9 @@ public class ConnectorSingleton {
             }
         }
         if (outOfTime){
-            startTag.getNextTag().setNextTag(null);
-            startTag.setNextTag(null);
+            for (Line line : lines) {
+                parent.getChildren().remove(line);
+            }
             Interfaz.popUp("No se pudo conectar, acerque más los nodos");
             return false;
 
@@ -75,7 +78,6 @@ public class ConnectorSingleton {
             for (Line line : lines) {
                 line.setVisible(true);
                 startTag.getLines().add(line);
-
             }
             return true;
         }

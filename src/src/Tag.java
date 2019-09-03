@@ -20,10 +20,10 @@ public abstract class Tag extends Label {
     private boolean onDrag;
     private double relClickX;
     private double relClickY;
-    private Tag nextTag;
+    private ArrayList<Tag> nextTag;
 
-    public void setNextTag(Tag nextTag) {
-        this.nextTag = nextTag;
+    public void addNextTag(Tag nextTag) {
+        this.nextTag.add(nextTag);
     }
 
     private ArrayList<Bounds> bounds;
@@ -36,6 +36,7 @@ public abstract class Tag extends Label {
         this.lines = new ArrayList<>();
         this.setMovementListener();
         this.onDrag=false;
+        this.nextTag=new ArrayList<>();
     }
 
     protected void display(String text){
@@ -129,11 +130,13 @@ public abstract class Tag extends Label {
                         source.setVisible(false);
                         overlap.setVisible(false);
                         ConnectorSingleton connector = ConnectorSingleton.getInstance(source, overlap);
-                        boolean result = connector.autoConnect(source, overlap);
-                        nextTag = overlap;
-                        overlap.setNextTag(source);
+                        boolean result = connector.autoConnect();
+                        nextTag.add(overlap);
+                        overlap.addNextTag(source);
                         if (!result) {
                             source.uptadeDisplacedTag(thisLine);
+                        }else{
+                            source.goBackHome();
                         }
                     } else {
                         if (lines.size() > 1) {
@@ -153,10 +156,6 @@ public abstract class Tag extends Label {
         });
     }
 
-    public Tag getNextTag() {
-        return nextTag;
-    }
-
     public void uptadeDisplacedTag(Line thisLine){
         if (thisLine.getStartX() > thisLine.getEndX()) {
             this.setLayoutX(thisLine.getEndX() - this.getWidth());
@@ -174,7 +173,12 @@ public abstract class Tag extends Label {
 
     }
 
+    public void goBackHome() {
+        this.setLayoutX(coords.getX() + component.getX());
+        this.setLayoutY(coords.getY() + component.getY());
+    }
     public void updateTagPosition(){
+        this.clearAllNeighboors();
         this.clearLines();
         this.setLayoutX(coords.getX() + component.getX());
         this.setLayoutY(coords.getY() + component.getY());
@@ -235,7 +239,7 @@ public abstract class Tag extends Label {
         }
     }
     public Point getLastLineEndPoint(){
-        if(this.lines.isEmpty() ){
+        if(this.lines.isEmpty() || this.hasNextTag()){
             return new Point((int)(nodCoords.getX()+component.getX()),(int)(nodCoords.getY()+component.getY()));
         }else{
             Line lastLine= lines.get(lines.size()-1);
@@ -243,7 +247,7 @@ public abstract class Tag extends Label {
         }
     }
     public boolean hasNextTag(){
-        if (this.nextTag!=null){
+        if (!this.nextTag.isEmpty()){
             return true;
         }else{
             return false;
@@ -254,19 +258,30 @@ public abstract class Tag extends Label {
         return lines;
     }
 
+    public ArrayList<Tag> getNextTag() {
+        return nextTag;
+    }
+
+    public void clearAllNeighboors(){
+        if(this.hasNextTag()){
+            for(Tag tag:nextTag){
+                tag.getNextTag().remove(this);
+                tag.goBackHome();
+                tag.clearLines();
+                if(!hasNextTag()){
+                    tag.setVisible(true);
+                }
+            }
+            this.nextTag=new ArrayList<>();
+        }
+        this.setVisible(true);
+    }
+
     public void clearLines(){
         for(Line line:this.lines){
             parent.getChildren().remove(line);
         }
         lines= new ArrayList<>();
-        if(this.hasNextTag()){
-            this.nextTag.setNextTag(null);
-            this.nextTag.updateTagPosition();
-            nextTag.setVisible(true);
-            this.setVisible(true);
-            this.setNextTag(null);
-        }
-        this.setVisible(true);
     }
 
     private boolean overlapsComponents(Line line){
