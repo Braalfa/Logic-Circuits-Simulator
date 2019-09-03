@@ -15,7 +15,7 @@ public abstract class Tag extends Label {
     protected Point nodCoords;
     protected Point coords;
     private static AnchorPane parent;
-    protected ArrayList<Line> lines;
+    protected ArrayList<ArrayList<Line>> lines;
     protected Component component;
     private boolean onDrag;
     private double relClickX;
@@ -33,7 +33,7 @@ public abstract class Tag extends Label {
         this.nodCoords=nodCoords;
         this.parent=parent;
         this.component=component;
-        this.lines = new ArrayList<>();
+        this.lines = new ArrayList<ArrayList<Line>>();
         this.setMovementListener();
         this.onDrag=false;
         this.nextTag=new ArrayList<>();
@@ -57,6 +57,7 @@ public abstract class Tag extends Label {
                 event.consume();
                 Line line= new Line();
                 if(lines.isEmpty()){
+                    lines.add(new ArrayList<Line>());
                     double xpos= source.getNodCords().getX()+source.getComponent().getX();
                     double ypos= source.getNodCords().getY()+source.getComponent().getY();
                     line.setStartX(xpos);
@@ -64,14 +65,14 @@ public abstract class Tag extends Label {
                     line.setEndX(xpos);
                     line.setEndY(ypos);
                 }else{
-                    Line lastLine= lines.get(lines.size()-1);
+                    Line lastLine= lines.get(lines.size()-1).get(lines.size()-1);
                     line.setStartX(lastLine.getEndX());
                     line.setEndX(lastLine.getEndX());
                     line.setStartY(lastLine.getEndY());
                     line.setEndY(lastLine.getEndY());
                 }
                 parent.getChildren().add(line);
-                lines.add(line);
+                lines.get(lines.size()-1).add(line);
             }
         });
         this.setOnMouseDragged( new EventHandler<MouseEvent>() {
@@ -79,7 +80,7 @@ public abstract class Tag extends Label {
                 Tag source= (Tag)event.getSource();
                 source.setLayoutX(event.getSceneX()-relClickX);
                 source.setLayoutY(event.getSceneY()-relClickY);
-                Line thisLine= lines.get(lines.size()-1);
+                Line thisLine= lines.get(lines.size()-1).get(lines.size()-1);
                 if (!source.overlapsComponents(thisLine)) {
                     if (Math.abs(source.getLayoutX() - thisLine.getStartX()) > Math.abs(source.getLayoutY() - thisLine.getStartY())) {
                         thisLine.setEndX(source.getLayoutX());
@@ -109,14 +110,14 @@ public abstract class Tag extends Label {
             public void handle(MouseEvent event) {
                 Tag source = (Tag) event.getSource();
                 Tag overlap;
-                Line thisLine = lines.get(lines.size() - 1);
+                Line thisLine = lines.get(lines.size()-1).get(lines.size() - 1);
                 overlap = source.getOverlap();
                 if (overlap == null) {
                     if (thisLine.getStartX() == thisLine.getEndX() && thisLine.getStartY() == thisLine.getEndY()) {
                         if (lines.size() > 1) {
                             lines.remove(thisLine);
                             parent.getChildren().remove(thisLine);
-                            thisLine = lines.get(lines.size() - 1);
+                            thisLine = lines.get(lines.size()-1).get(lines.size() - 1);
                             source.uptadeDisplacedTag(thisLine);
                         } else {
                             source.setLayoutX(coords.getX() + component.getX());
@@ -142,7 +143,7 @@ public abstract class Tag extends Label {
                         if (lines.size() > 1) {
                             lines.remove(thisLine);
                             parent.getChildren().remove(thisLine);
-                            thisLine = lines.get(lines.size() - 1);
+                            thisLine = lines.get(lines.size()-1).get(lines.size() - 1);
                             source.uptadeDisplacedTag(thisLine);
                         } else {
                             source.setLayoutX(coords.getX() + component.getX());
@@ -179,7 +180,9 @@ public abstract class Tag extends Label {
     }
     public void updateTagPosition(){
         this.clearAllNeighboors();
-        this.clearLines();
+        for(int i=0;i< lines.size();i++){
+            this.clearLines(i);
+        }
         this.setLayoutX(coords.getX() + component.getX());
         this.setLayoutY(coords.getY() + component.getY());
 
@@ -223,7 +226,7 @@ public abstract class Tag extends Label {
     }
 
     public void removeLastLine(){
-        Line line= lines.get(lines.size()-1);
+        Line line= lines.get(lines.size()-1).get(lines.size()-1);
         parent.getChildren().remove(line);
         lines.remove(line);
     }
@@ -234,7 +237,7 @@ public abstract class Tag extends Label {
         }else if ( lines.size()==1){
             return new Point((int)(nodCoords.getX()+component.getX()),(int)(nodCoords.getY()+component.getY()));
         }else{
-            Line lastLine= lines.get(lines.size()-2);
+            Line lastLine= lines.get(lines.size()-1).get(lines.size()-2);
             return new Point((int)lastLine.getEndX(),(int)lastLine.getEndY());
         }
     }
@@ -242,7 +245,7 @@ public abstract class Tag extends Label {
         if(this.lines.isEmpty() || this.hasNextTag()){
             return new Point((int)(nodCoords.getX()+component.getX()),(int)(nodCoords.getY()+component.getY()));
         }else{
-            Line lastLine= lines.get(lines.size()-1);
+            Line lastLine= lines.get(lines.size()-1).get(lines.size()-1);
             return new Point((int)lastLine.getEndX(),(int)lastLine.getEndY());
         }
     }
@@ -255,7 +258,7 @@ public abstract class Tag extends Label {
     }
 
     public ArrayList<Line> getLines() {
-        return lines;
+        return lines.get(lines.size()-1);
     }
 
     public ArrayList<Tag> getNextTag() {
@@ -264,24 +267,30 @@ public abstract class Tag extends Label {
 
     public void clearAllNeighboors(){
         if(this.hasNextTag()){
-            for(Tag tag:nextTag){
-                tag.getNextTag().remove(this);
+            for (Tag tag : nextTag) {
                 tag.goBackHome();
-                tag.clearLines();
-                if(!hasNextTag()){
-                    tag.setVisible(true);
+                try {
+                    tag.clearLines(tag.getNextTag().indexOf(this));
+                } catch (IndexOutOfBoundsException e) {
+
+                } finally {
+                    tag.getNextTag().remove(this);
+                    if (!tag.hasNextTag()) {
+                        tag.setVisible(true);
+                    }
                 }
+
             }
             this.nextTag=new ArrayList<>();
         }
         this.setVisible(true);
     }
 
-    public void clearLines(){
-        for(Line line:this.lines){
+    public void clearLines(int numberLine){
+        for(Line line:this.lines.get(numberLine)){
             parent.getChildren().remove(line);
         }
-        lines= new ArrayList<>();
+        lines.remove(numberLine);
     }
 
     private boolean overlapsComponents(Line line){
