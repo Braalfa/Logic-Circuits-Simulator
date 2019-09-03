@@ -41,9 +41,9 @@ public class ConnectorSingleton {
         this.bounds=bounds;
 
     }
-    public void autoConnect(Tag start, Tag end) {
-        Point startPoint = start.getLastLinePoint();
-        Point endPoint = end.getLastLinePoint();
+    public boolean autoConnect(Tag start, Tag end) {
+        Point startPoint = start.getLastLineStartPoint();
+        Point endPoint = end.getLastLineEndPoint();
         start.removeLastLine();
         Line[] lines = null;
         int linesIndex = 1;
@@ -66,11 +66,18 @@ public class ConnectorSingleton {
             }
         }
         if (outOfTime){
+            startTag.getNextTag().setNextTag(null);
             startTag.setNextTag(null);
+            Interfaz.popUp("No se pudo conectar, acerque más los nodos");
+            return false;
+
         }else {
             for (Line line : lines) {
                 line.setVisible(true);
+                startTag.getLines().add(line);
+
             }
+            return true;
         }
     }
     public Line[] createPath(int numberlines, int orgLines, int ax, int ay, int bx, int by, int direction, Tag start, Tag end ) {
