@@ -3,6 +3,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.skin.ScrollPaneSkin;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
@@ -51,34 +53,41 @@ public abstract class Tag extends Label {
     private void setMovementListener(){
         this.setOnMousePressed(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
-                Tag source= (Tag)event.getSource();
-                relClickX=-source.getLayoutX()+event.getSceneX();
-                relClickY=-source.getLayoutY()+event.getSceneY();
-                event.consume();
-                Line line= new Line();
-                if(lines.isEmpty()){
-                    double xpos= source.getNodCords().getX()+source.getComponent().getX();
-                    double ypos= source.getNodCords().getY()+source.getComponent().getY();
-                    line.setStartX(xpos);
-                    line.setStartY(ypos);
-                    line.setEndX(xpos);
-                    line.setEndY(ypos);
-                }else{
-                    Line lastLine= lines.get(lines.size()-1);
-                    line.setStartX(lastLine.getEndX());
-                    line.setEndX(lastLine.getEndX());
-                    line.setStartY(lastLine.getEndY());
-                    line.setEndY(lastLine.getEndY());
+                Tag source = (Tag) event.getSource();
+                if(event.getButton()==MouseButton.PRIMARY) {
+                    ScrollPane scrollpane = (ScrollPane) component.getScene().lookup("#scrollPane");
+                    relClickX = -source.getLayoutX() + event.getSceneX()+scrollpane.getHvalue()*(parent.getWidth()-scrollpane.getViewportBounds().getWidth());
+                    relClickY = -source.getLayoutY() + event.getSceneY()+scrollpane.getVvalue()*(parent.getHeight()-scrollpane.getViewportBounds().getHeight());
+                    event.consume();
+                    Line line = new Line();
+                    if (lines.isEmpty()) {
+                        double xpos = source.getNodCords().getX() + source.getComponent().getX();
+                        double ypos = source.getNodCords().getY() + source.getComponent().getY();
+                        line.setStartX(xpos);
+                        line.setStartY(ypos);
+                        line.setEndX(xpos);
+                        line.setEndY(ypos);
+                    } else {
+                        Line lastLine = lines.get(lines.size() - 1);
+                        line.setStartX(lastLine.getEndX());
+                        line.setEndX(lastLine.getEndX());
+                        line.setStartY(lastLine.getEndY());
+                        line.setEndY(lastLine.getEndY());
+                    }
+                    parent.getChildren().add(line);
+                    lines.add(line);
+                }else if (event.getButton()==MouseButton.SECONDARY){
+                    source.goBackHome();
+                    source.clearLines();
                 }
-                parent.getChildren().add(line);
-                lines.add(line);
             }
         });
         this.setOnMouseDragged( new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 Tag source= (Tag)event.getSource();
-                source.setLayoutX(event.getSceneX()-relClickX);
-                source.setLayoutY(event.getSceneY()-relClickY);
+                ScrollPane scrollpane = (ScrollPane) component.getScene().lookup("#scrollPane");
+                source.setLayoutX(event.getSceneX()+scrollpane.getHvalue()*(parent.getWidth()-scrollpane.getViewportBounds().getWidth())-relClickX);
+                source.setLayoutY(event.getSceneY()+scrollpane.getVvalue()*(parent.getHeight()-scrollpane.getViewportBounds().getHeight())-relClickY);
                 Line thisLine= lines.get(lines.size()-1);
                 if (!source.overlapsComponents(thisLine)) {
                     if (Math.abs(source.getLayoutX() - thisLine.getStartX()) > Math.abs(source.getLayoutY() - thisLine.getStartY())) {
@@ -107,51 +116,53 @@ public abstract class Tag extends Label {
         });
         this.setOnMouseReleased(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
-                Tag source = (Tag) event.getSource();
-                Tag overlap;
-                Line thisLine = lines.get(lines.size() - 1);
-                overlap = source.getOverlap();
-                if (overlap == null) {
-                    if (thisLine.getStartX() == thisLine.getEndX() && thisLine.getStartY() == thisLine.getEndY()) {
-                        if (lines.size() > 1) {
-                            lines.remove(thisLine);
-                            parent.getChildren().remove(thisLine);
-                            thisLine = lines.get(lines.size()-1);
-                            source.uptadeDisplacedTag(thisLine);
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    Tag source = (Tag) event.getSource();
+                    Tag overlap;
+                    Line thisLine = lines.get(lines.size() - 1);
+                    overlap = source.getOverlap();
+                    if (overlap == null) {
+                        if (thisLine.getStartX() == thisLine.getEndX() && thisLine.getStartY() == thisLine.getEndY()) {
+                            if (lines.size() > 1) {
+                                lines.remove(thisLine);
+                                parent.getChildren().remove(thisLine);
+                                thisLine = lines.get(lines.size() - 1);
+                                source.uptadeDisplacedTag(thisLine);
+                            } else {
+                                source.setLayoutX(coords.getX() + component.getX());
+                                source.setLayoutY(coords.getY() + component.getY());
+                            }
                         } else {
-                            source.setLayoutX(coords.getX() + component.getX());
-                            source.setLayoutY(coords.getY() + component.getY());
+                            source.uptadeDisplacedTag(thisLine);
                         }
                     } else {
-                        source.uptadeDisplacedTag(thisLine);
-                    }
-                } else {
-                    if (((overlap instanceof InputTag && !overlap.hasNextTag()) || overlap instanceof OutputTag) && overlap.getComponent() != source.getComponent()) {
-                        ConnectorSingleton connector = ConnectorSingleton.getInstance(source, overlap);
-                        boolean result = connector.autoConnect();
-                        if (!result) {
-                            source.uptadeDisplacedTag(thisLine);
-                        }else{
-                            nextTag.add(overlap);
-                            overlap.addNextTag(source);
-                            source.setVisible(false);
-                            overlap.setVisible(false);
-                            source.goBackHome();
-                        }
-                    } else {
-                        if (lines.size() > 1) {
-                            lines.remove(thisLine);
-                            parent.getChildren().remove(thisLine);
-                            thisLine = lines.get(lines.size()-1);
-                            source.uptadeDisplacedTag(thisLine);
+                        if (((overlap instanceof InputTag && !overlap.hasNextTag()) || overlap instanceof OutputTag) && overlap.getComponent() != source.getComponent()) {
+                            ConnectorSingleton connector = ConnectorSingleton.getInstance(source, overlap);
+                            boolean result = connector.autoConnect();
+                            if (!result) {
+                                source.uptadeDisplacedTag(thisLine);
+                            } else {
+                                nextTag.add(overlap);
+                                overlap.addNextTag(source);
+                                source.setVisible(false);
+                                overlap.setVisible(false);
+                                source.goBackHome();
+                            }
                         } else {
-                            source.setLayoutX(coords.getX() + component.getX());
-                            source.setLayoutY(coords.getY() + component.getY());
+                            if (lines.size() > 1) {
+                                lines.remove(thisLine);
+                                parent.getChildren().remove(thisLine);
+                                thisLine = lines.get(lines.size() - 1);
+                                source.uptadeDisplacedTag(thisLine);
+                            } else {
+                                source.setLayoutX(coords.getX() + component.getX());
+                                source.setLayoutY(coords.getY() + component.getY());
+                            }
                         }
                     }
+
+
                 }
-
-
             }
         });
     }
@@ -177,7 +188,7 @@ public abstract class Tag extends Label {
         this.setLayoutX(coords.getX() + component.getX());
         this.setLayoutY(coords.getY() + component.getY());
     }
-    public void updateTagPosition(){
+    public void disconect(){
         this.clearAllNeighboors();
         this.clearLines();
         this.setLayoutX(coords.getX() + component.getX());
@@ -303,6 +314,11 @@ public abstract class Tag extends Label {
             }
         }
         return result;
+    }
+
+    public void destroy(){
+        this.disconect();
+        parent.getChildren().remove(this);
     }
 
 }

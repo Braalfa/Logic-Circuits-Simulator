@@ -2,6 +2,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
@@ -178,16 +179,22 @@ public class ControladorFXML {
         component.setOnMousePressed( new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                componentOrgX=-component.getX()+event.getSceneX();
-                componentOrgY=-component.getY()+event.getSceneY();
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    componentOrgX = -component.getX() + event.getX();
+                    componentOrgY = -component.getY() +event.getY();
+                }else if(event.getButton()==MouseButton.SECONDARY){
+                    component.destroy();
+                }
             }
         });
         component.setOnMouseDragged( new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                component.setX(event.getX()-componentOrgX);
-                component.setY(event.getY()-componentOrgY);
-                component.updateTagsPositions();
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    component.setX(event.getX()-componentOrgX);
+                    component.setY(event.getY()-componentOrgY);
+                    component.updateTagsPositions();
+                }
             }
         });
 

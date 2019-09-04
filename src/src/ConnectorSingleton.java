@@ -110,8 +110,8 @@ public class ConnectorSingleton {
             Line line = null;
             if (direction == 1) {
                 middle = (by - ay) / 2;
-                while (lines == null && !done1 && !done2) {
-                    if (ay + middle + iterator < lim1) {
+                while (lines == null && (!done1 || !done2)) {
+                    if (ay + middle + iterator < lim1 && !done1) {
                         parent.getChildren().remove(line);
                         line = this.createLine(ax, ay, ax, ay + middle + iterator);
                         if (!this.overlaps(line,start, end)) {
@@ -120,7 +120,7 @@ public class ConnectorSingleton {
                     } else{
                         done1=true;
                     }
-                    if (lines == null && (ay + middle - iterator > lim2)) {
+                    if (lines == null && (ay + middle - iterator > lim2 && !done2)) {
                         parent.getChildren().remove(line);
                         line = this.createLine(ax, ay, ax, ay + middle - iterator);
                         if (!this.overlaps(line,start, end)) {
@@ -133,8 +133,8 @@ public class ConnectorSingleton {
                 }
             } else {
                 middle = (bx - ax) / 2;
-                while (lines == null && !done1 && !done2) {
-                    if (ax + middle + iterator < lim3) {
+                while (lines == null && (!done1 || !done2)) {
+                    if (ax + middle + iterator < lim3 && !done1) {
                         parent.getChildren().remove(line);
                         line = this.createLine(ax, ay, ax + middle + iterator, ay);
                         if (!this.overlaps(line, start, end)) {
@@ -143,7 +143,7 @@ public class ConnectorSingleton {
                     } else {
                         done1 = true;
                     }
-                    if (lines == null && (ax + middle - iterator > lim4)) {
+                    if (lines == null && (ax + middle - iterator > lim4 && !done2)) {
                         parent.getChildren().remove(line);
                         line = this.createLine(ax, ay, ax + middle - iterator, ay);
 

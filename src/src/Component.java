@@ -47,12 +47,21 @@ abstract class Component extends ImageView{
     }
 
     public void updateTagsPositions(){
-        inputTag1.updateTagPosition();
-        outputTag.updateTagPosition();
+        inputTag1.disconect();
+        outputTag.disconect();
         if(inputs==2){
-            inputTag2.updateTagPosition();
+            inputTag2.disconect();
         }
 
+    }
+
+    public void destroy(){
+        inputTag1.destroy();
+        outputTag.destroy();
+        if(inputs==2){
+            inputTag2.destroy();
+        }
+        ((AnchorPane)this.getParent()).getChildren().remove(this);
     }
 
     abstract public boolean calculate();
