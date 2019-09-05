@@ -23,12 +23,9 @@ public abstract class Tag extends Label {
     private double relClickX;
     private double relClickY;
     private ArrayList<Tag> nextTag;
-
     public void addNextTag(Tag nextTag) {
         this.nextTag.add(nextTag);
     }
-
-    private ArrayList<Bounds> bounds;
 
     public Tag(AnchorPane parent, Point nodCoords, Component component){
         this.coords=new Point((int)nodCoords.getX(),(int)nodCoords.getY());

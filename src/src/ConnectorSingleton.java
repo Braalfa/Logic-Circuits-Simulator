@@ -68,12 +68,16 @@ public class ConnectorSingleton {
             }
         }
         if (outOfTime){
-            for (Line line : lines) {
-                parent.getChildren().remove(line);
-            }
-            Interfaz.popUp("No se pudo conectar, acerque más los nodos");
-            return false;
+            try{
+                for (Line line : lines) {
+                    parent.getChildren().remove(line);
+                }
+            }catch (NullPointerException e){
 
+            }finally {
+                Interfaz.popUp("No se pudo conectar, acerque más los nodos");
+                return false;
+            }
         }else {
             for (Line line : lines) {
                 line.setVisible(true);
