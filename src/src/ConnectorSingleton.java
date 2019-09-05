@@ -34,8 +34,8 @@ public class ConnectorSingleton {
         ObservableList<Node> nodes=parent.getChildren();
         ArrayList<Bounds> bounds= new ArrayList<>();
         for(Node node: nodes){
-            if ((node instanceof Component) && (node!= startTag.getComponent() && node!=endTag.getComponent())){
-                bounds.add(node.getBoundsInParent());
+            if ((node instanceof Component) && node!= startTag.getComponent() && node!=endTag.getComponent()){
+                bounds.add(node.getLayoutBounds());
             }
         }
         this.bounds=bounds;
@@ -87,6 +87,10 @@ public class ConnectorSingleton {
         }
     }
     public Line[] createPath(int numberlines, int orgLines, int ax, int ay, int bx, int by, int direction, Tag start, Tag end ) {
+        int lim1 = (int)parent.getHeight();
+        int lim2 = 0;
+        int lim3 = (int)parent.getWidth();
+        int lim4 = 0;
         if (numberlines == 1) {
             if (ax == bx || by == ay) {
                 Line[] result = new Line[orgLines];
@@ -106,10 +110,6 @@ public class ConnectorSingleton {
             int middle;
             boolean done1 = false;
             boolean done2 = false;
-            int lim1 = this.getDownLimit(ax);
-            int lim2 = this.getUpLimit(ax);
-            int lim3 = this.getRigthLimit(ay);
-            int lim4 = this.getLeftLimit(ay);
             int iterator = 0;
             Line line = null;
             if (direction == 1) {
@@ -133,7 +133,7 @@ public class ConnectorSingleton {
                     } else {
                         done2 = true;
                     }
-                    iterator+=1;
+                    iterator += 1;
                 }
             } else {
                 middle = (bx - ax) / 2;
@@ -181,7 +181,6 @@ public class ConnectorSingleton {
         boolean result=false;
         Bounds startBn = start.getComponent().getLayoutBounds();
         Bounds endBn = end.getComponent().getLayoutBounds();
-
         if( line.intersects(startBn.getMinX()+1,startBn.getMinY(),startBn.getMaxX()-startBn.getMinX()-2, startBn.getMaxY()-startBn.getMinY())  ||
                 line.intersects(endBn.getMinX()+1,endBn.getMinY(),endBn.getMaxX()-endBn.getMinX()-2, endBn.getMaxY()-endBn.getMinY())){
             result=true;
@@ -189,50 +188,5 @@ public class ConnectorSingleton {
         }
         return result;
 
-    }
-
-    private int getRigthLimit(int posY){
-        int limX=(int) parent.getWidth();
-        for(Bounds bound: bounds){
-            if(bound.getMinY()<=posY && bound.getMaxY()>=posY){
-                if(limX>bound.getMinX()){
-                    limX= (int) bound.getMinX();
-                }
-            }
-        }
-        return limX;
-    }
-    private int getLeftLimit( int posY){
-        int limX=0;
-        for(Bounds bound: bounds){
-            if(bound.getMinY()<=posY && bound.getMaxY()>=posY){
-                if(limX<bound.getMaxX()){
-                    limX= (int) bound.getMinX();
-                }
-            }
-        }
-        return limX;
-    }
-    private int getDownLimit( int posX){
-        int limY=(int) parent.getHeight();
-        for(Bounds bound: bounds){
-            if(bound.getMinX()<=posX && bound.getMaxX()>=posX){
-                if(limY>bound.getMinY()){
-                    limY= (int) bound.getMinY();
-                }
-            }
-        }
-        return limY;
-    }
-    private int getUpLimit(int posX){
-        int limY=0;
-        for(Bounds bound: bounds){
-            if(bound.getMinX()<=posX && bound.getMaxX()>=posX){
-                if(limY<bound.getMaxY()){
-                    limY= (int) bound.getMaxY();
-                }
-            }
-        }
-        return limY;
     }
 }
