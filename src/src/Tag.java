@@ -212,7 +212,7 @@ public abstract class Tag extends Label {
         ObservableList<Node> nodos=parent.getChildren();
         Tag overlap=null;
         for(Node nodo:nodos){
-            if(nodo instanceof Tag && !nodo.getClass().equals(this.getClass()) && nodo.isVisible()){
+            if(nodo instanceof Tag && !nodo.getClass().equals(this.getClass()) && (nodo.isVisible() || nodo instanceof OutputTag)){
                 if(nodo.getBoundsInParent().intersects(this.getBoundsInParent())){
                     overlap=(Tag)nodo;
                     break;
