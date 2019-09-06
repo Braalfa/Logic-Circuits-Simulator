@@ -22,6 +22,30 @@ abstract class Component extends ImageView{
     protected InputTag inputTag1;
     protected InputTag inputTag2;
 
+    public boolean getInput1() {
+        return input1;
+    }
+
+    public void setInput1(boolean input1) {
+        this.input1 = input1;
+    }
+
+    public boolean getInput2() {
+        return input2;
+    }
+
+    public void setInput2(boolean input2) {
+        this.input2 = input2;
+    }
+
+    public boolean getOutput() {
+        return output;
+    }
+
+    public void setOutput(boolean output) {
+        this.output = output;
+    }
+
     public Component(int inputs, Point outputCoords, Point inputCoordsl, Point inputCoords2, Image image){
         this.inputs=inputs;
         this.outputCoords=outputCoords;
