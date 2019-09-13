@@ -75,7 +75,7 @@ public class ConnectorSingleton {
             }catch (NullPointerException e){
 
             }finally {
-                Interfaz.popUp("No se pudo conectar, acerque más los nodos");
+                Interfaz.popUp("Error","No se pudo conectar, acerque más los nodos");
                 return false;
             }
         }else {

@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class List<T>{
+public class List<T> {
     private Nodo first;
     public List()
     {}

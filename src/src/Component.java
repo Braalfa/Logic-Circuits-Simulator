@@ -62,15 +62,28 @@ abstract class Component extends ImageView{
 
     protected void setUpLabels(){
         AnchorPane parent=(AnchorPane) this.getParent();
-        this.inputTag1=new InputTag(parent, inputCoordsl,this);
+        this.inputTag1=new InputTag(parent, inputCoordsl,this,1);
         this.outputTag=new OutputTag(parent, outputCoords,this);
         if(inputs==2){
-            this.inputTag2=new InputTag(parent, inputCoords2,this);
+            this.inputTag2=new InputTag(parent, inputCoords2,this,2);
         }
         this.updateTagsPositions();
     }
 
+    public InputTag getInputTag1() {
+        return inputTag1;
+    }
+
+    public InputTag getInputTag2() {
+        return inputTag2;
+    }
+
+    public OutputTag getOutputTag() {
+        return outputTag;
+    }
+
     public void updateTagsPositions(){
+        SuperTree.getInstance().disconnect(this);
         inputTag1.disconect();
         outputTag.disconect();
         if(inputs==2){
@@ -80,6 +93,7 @@ abstract class Component extends ImageView{
     }
 
     public void destroy(){
+        SuperTree.getInstance().remove(this);
         inputTag1.destroy();
         outputTag.destroy();
         if(inputs==2){

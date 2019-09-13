@@ -22,10 +22,10 @@ public abstract class Tag extends Label {
     private boolean onDrag;
     private double relClickX;
     private double relClickY;
-    private ArrayList<Tag> nextTag;
-    public void addNextTag(Tag nextTag) {
-        this.nextTag.add(nextTag);
-    }
+    protected ArrayList<Tag> nextTag;
+    protected SuperTree superTree;
+
+    abstract protected void addNextTag(Tag nextTag);
 
     public Tag(AnchorPane parent, Point nodCoords, Component component){
         this.coords=new Point((int)nodCoords.getX(),(int)nodCoords.getY());
@@ -36,6 +36,7 @@ public abstract class Tag extends Label {
         this.setMovementListener();
         this.onDrag=false;
         this.nextTag=new ArrayList<>();
+        this.superTree= SuperTree.getInstance();
     }
 
     protected void display(String text){
@@ -139,7 +140,7 @@ public abstract class Tag extends Label {
                             if (!result) {
                                 source.uptadeDisplacedTag(thisLine);
                             } else {
-                                nextTag.add(overlap);
+                                source.addNextTag(overlap);
                                 overlap.addNextTag(source);
                                 source.setVisible(false);
                                 overlap.setVisible(false);

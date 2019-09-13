@@ -18,8 +18,13 @@ public class OutputTag extends Tag {
             text="o<"+unusedIds.get(0)+">";
             unusedIds.remove(0);
         }
+        this.setId(text);
+        this.setId(text);
         this.display(text);
         this.coords.setLocation(coords.getX(),coords.getY()-this.getHeight()/2);
     }
 
+    protected void addNextTag(Tag nextTag) {
+        this.nextTag.add(nextTag);
+    }
 }

@@ -1,10 +1,31 @@
-import javafx.scene.Node;
+import java.util.ArrayList;
 
-public class ListComponent {
+public class SuperTree {
     private List<NodoComponent> outputComponents;
-    public ListComponent(){}
+    private static SuperTree instance;
+    public SuperTree(){
+        outputComponents=new List<>();
+    }
 
+    public static SuperTree getInstance(){
+        if(instance==null){
+            instance= new SuperTree();
+        }else{
+        }
+        return instance;
+    }
 
+    public List<Component> getOutComponents(){
+        List<Component> componentList= new List<>();
+        for(int i = 0; i<outputComponents.count();i++){
+            componentList.addEnd(outputComponents.get(i).getComponent());
+        }
+        return componentList;
+    }
+
+    public void add(Component component) {
+        outputComponents.addEnd(new NodoComponent(component));
+    }
 
     public void setFreeOutput(NodoComponent nodo){
         if(!this.isOnOutputList(nodo)){
@@ -14,6 +35,13 @@ public class ListComponent {
 
 
     public void remove(NodoComponent nodo){
+        this.disconnectFromChildren(nodo);
+        this.disconnectFromParents(nodo);
+        this.outputComponents.delete(nodo);
+    }
+
+    public void remove(Component component){
+        NodoComponent nodo= this.getNode(component);
         this.disconnectFromChildren(nodo);
         this.disconnectFromParents(nodo);
         this.outputComponents.delete(nodo);
@@ -132,7 +160,7 @@ public class ListComponent {
         return nodo;
     }
 
-    private void calculateOutput(){
+    public void calculateOutput(){
         NodoComponent nodo;
         for(int i=0;i<outputComponents.count();i++){
             nodo=outputComponents.get(i);
@@ -151,5 +179,34 @@ public class ListComponent {
             currentNode.getComponent().setInput2(currentNode.getPrev2().getComponent().getOutput());
         }
         currentNode.getComponent().calculate();
+    }
+
+    public ArrayList<InputTag> getFreeInputTags(){
+        NodoComponent nodo;
+        ArrayList<InputTag> tags= new ArrayList<>();
+        for(int i=0;i<outputComponents.count();i++){
+            nodo=outputComponents.get(i);
+            this.getFreeInputTags(nodo, tags);
+        }
+        return tags;
+    }
+
+    private  void getFreeInputTags(NodoComponent currentNode, ArrayList<InputTag> tags){
+        if(currentNode.getPrev1()!=null){
+            getFreeInputTags(currentNode.getPrev1(), tags);
+        }else{
+            InputTag inputTag1= currentNode.getComponent().getInputTag1();
+            if(!tags.contains(inputTag1)){
+                tags.add(inputTag1);
+            }
+        }
+        if(currentNode.getPrev2()!=null){
+            getFreeInputTags(currentNode.getPrev2(), tags);
+        }else{
+            InputTag inputTag2= currentNode.getComponent().getInputTag2();
+            if(!tags.contains(inputTag2) && inputTag2!=null){
+                tags.add(inputTag2);
+            }
+        }
     }
 }
