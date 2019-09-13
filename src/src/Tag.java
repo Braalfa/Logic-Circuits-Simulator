@@ -134,7 +134,11 @@ public abstract class Tag extends Label {
                             source.uptadeDisplacedTag(thisLine);
                         }
                     } else {
-                        if (((overlap instanceof InputTag && !overlap.hasNextTag()) || overlap instanceof OutputTag) && overlap.getComponent() != source.getComponent()) {
+                        NodoComponent nodoSource =  superTree.getNode(source.getComponent());
+                        NodoComponent nodoOverlap =  superTree.getNode(overlap.getComponent());
+                        if ((((overlap instanceof InputTag && !overlap.hasNextTag() && !nodoOverlap.getNext().isContained(source.getComponent()))
+                                || (overlap instanceof OutputTag && !nodoSource.getNext().isContained(overlap.getComponent())))
+                                && overlap.getComponent() != source.getComponent()) ){
                             ConnectorSingleton connector = ConnectorSingleton.getInstance(source, overlap);
                             boolean result = connector.autoConnect();
                             if (!result) {

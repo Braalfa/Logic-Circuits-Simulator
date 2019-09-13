@@ -131,7 +131,7 @@ public class SuperTree {
         return false;
     }
 
-    private NodoComponent getNode(Component component){
+    public NodoComponent getNode(Component component){
         NodoComponent nodo;
         NodoComponent result=null;
         for(int i=0;i<outputComponents.count();i++){
