@@ -75,7 +75,7 @@ public class ControladorFXML {
                     if(component.getOutput()){
                         result=1;
                     }
-                    results += String.format("%1$-30s%2$-30s\n", component.getOutputTag().getId() + "", result + "");
+                    results += String.format("%1$-30s%2$-30s\n", component.getOutputTag().getId() + ":", result + "");
                 }
                 String inputs="";
                 for (int i = 0; i < tags.size(); i++) {
