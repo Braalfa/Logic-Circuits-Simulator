@@ -80,8 +80,11 @@ public class ConnectorSingleton {
             }
         }else {
             for (Line line : lines) {
-                line.setVisible(true);
-                startTag.getLines().add(line);
+                if(startTag instanceof InputTag){
+                    startTag.addLine(line);
+                }else{
+                    endTag.addLine(line);
+                }
             }
             return true;
         }

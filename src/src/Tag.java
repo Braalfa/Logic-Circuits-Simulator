@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public abstract class Tag extends Label {
     protected Point nodCoords;
@@ -24,7 +25,7 @@ public abstract class Tag extends Label {
     private double relClickY;
     protected ArrayList<Tag> nextTag;
     protected SuperTree superTree;
-
+    private Color linesColor;
     abstract protected void addNextTag(Tag nextTag);
 
     public Tag(AnchorPane parent, Point nodCoords, Component component){
@@ -37,6 +38,9 @@ public abstract class Tag extends Label {
         this.onDrag=false;
         this.nextTag=new ArrayList<>();
         this.superTree= SuperTree.getInstance();
+
+        Random random=new Random();
+        this.linesColor=new Color(random.nextFloat(),random.nextFloat(),random.nextFloat());
     }
 
     protected void display(String text){
@@ -72,8 +76,9 @@ public abstract class Tag extends Label {
                         line.setStartY(lastLine.getEndY());
                         line.setEndY(lastLine.getEndY());
                     }
+                    source.addLine(line);
                     parent.getChildren().add(line);
-                    lines.add(line);
+
                 }else if (event.getButton()==MouseButton.SECONDARY){
                     source.goBackHome();
                     source.clearLines();
@@ -148,6 +153,16 @@ public abstract class Tag extends Label {
                                 overlap.addNextTag(source);
                                 source.setVisible(false);
                                 overlap.setVisible(false);
+                                if(source instanceof InputTag){
+                                    overlap.setLinesColor(source.getLinesColor());
+                                    source.getLines().addAll(overlap.getLines());
+                                    overlap.resetLines();
+                                }else{
+                                    source.setLinesColor(overlap.getLinesColor());
+                                    overlap.getLines().addAll(source.getLines());
+                                    source.resetLines();
+                                }
+                                overlap.goBackHome();
                                 source.goBackHome();
                             }
                         } else {
@@ -193,6 +208,7 @@ public abstract class Tag extends Label {
     public void disconect(){
         this.clearAllNeighboors();
         this.clearLines();
+        this.setLinesColor(this.getLinesColor());
         this.setLayoutX(coords.getX() + component.getX());
         this.setLayoutY(coords.getY() + component.getY());
 
@@ -323,4 +339,36 @@ public abstract class Tag extends Label {
         parent.getChildren().remove(this);
     }
 
+    private void setLinesColor(Color color){
+        int r=color.getRed();
+        int g=color.getGreen();
+        int b=color.getBlue();
+        for(Line line: this.lines){
+            this.setLineColor(line,r,g,b);
+        }
+    }
+
+    private void setLineColor(Line line, int r, int g, int b){
+        line.setStyle("-fx-stroke:  rgb(" + r + "," + g + ", " + b + ");");
+    }
+
+    public void addLine(Line line){
+        line.setVisible(true);
+        this.getLines().add(line);
+        this.setLineColor(line);
+    }
+    private void setLineColor(Line line){
+        int r=this.getLinesColor().getRed();
+        int g=this.getLinesColor().getGreen();
+        int b=this.getLinesColor().getBlue();
+        line.setStyle("-fx-stroke:  rgb(" + r + "," + g + ", " + b + ");");
+    }
+
+    public Color getLinesColor(){
+        return this.linesColor;
+    }
+
+    public void resetLines() {
+        this.lines = new ArrayList<>();
+    }
 }
