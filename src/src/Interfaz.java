@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Interfaz extends Application {
 
@@ -44,7 +45,21 @@ public class Interfaz extends Application {
         alert.showAndWait();
 
     }
+    public static String inputDialog(String title, String message)
+    {
 
+        TextInputDialog dialog= new TextInputDialog();
+
+        dialog.setTitle(title);
+        dialog.setHeaderText(null);
+        dialog.setContentText(message);
+        Optional<String> result= dialog.showAndWait();
+        if(result.isPresent()){
+            return result.get();
+        }else{
+            return null;
+        }
+    }
     public static boolean[] getInputs(ArrayList<InputTag> tags){
         Dialog<ArrayList<String>> dialog = new Dialog<>();
         dialog.setTitle("Valores iniciales");

@@ -2,6 +2,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.skin.ScrollPaneSkin;
@@ -17,15 +18,15 @@ import java.util.Random;
 public abstract class Tag extends Label {
     protected Point nodCoords;
     protected Point coords;
-    private static AnchorPane parent;
+    protected AnchorPane parent;
     protected ArrayList<Line> lines;
     protected Component component;
-    private boolean onDrag;
     private double relClickX;
     private double relClickY;
     protected ArrayList<Tag> nextTag;
     protected SuperTree superTree;
     private Color linesColor;
+
     abstract protected void addNextTag(Tag nextTag);
 
     public Tag(AnchorPane parent, Point nodCoords, Component component){
@@ -35,7 +36,6 @@ public abstract class Tag extends Label {
         this.component=component;
         this.lines = new ArrayList<>();
         this.setMovementListener();
-        this.onDrag=false;
         this.nextTag=new ArrayList<>();
         this.superTree= SuperTree.getInstance();
 
@@ -275,6 +275,7 @@ public abstract class Tag extends Label {
             return new Point((int)lastLine.getEndX(),(int)lastLine.getEndY());
         }
     }
+
     public boolean hasNextTag(){
         if (!this.nextTag.isEmpty()){
             return true;
@@ -339,7 +340,7 @@ public abstract class Tag extends Label {
         parent.getChildren().remove(this);
     }
 
-    private void setLinesColor(Color color){
+    public void setLinesColor(Color color){
         int r=color.getRed();
         int g=color.getGreen();
         int b=color.getBlue();
@@ -370,5 +371,38 @@ public abstract class Tag extends Label {
 
     public void resetLines() {
         this.lines = new ArrayList<>();
+    }
+
+    public ArrayList<Line> cloneLines(Point diplacement){
+        Line copyLine;
+        ArrayList<Line> linesCopy=new ArrayList<>();
+        for(Line line:lines){
+            copyLine=new Line(line.getStartX()+diplacement.getX(),line.getStartY()+diplacement.getY(),line.getEndX()+diplacement.getX(),line.getEndY()+diplacement.getY());
+            linesCopy.add(copyLine);
+        }
+        return linesCopy;
+    }
+
+    public Point getCoords() {
+        return coords;
+    }
+
+    public void setCoords(Point coords) {
+        this.coords = coords;
+    }
+
+    public void setNextTag(ArrayList<Tag> nextTag) {
+        this.nextTag = nextTag;
+    }
+
+    public void setLines(ArrayList<Line> lines){
+        this.lines=lines;
+    }
+
+    public void addToPane(AnchorPane pane){
+        pane.getChildren().add(this);
+        for(Line line:lines){
+            pane.getChildren().add(this);
+        }
     }
 }

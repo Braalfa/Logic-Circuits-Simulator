@@ -6,7 +6,7 @@ import java.awt.*;
 public class AndGate extends Component {
 
     public AndGate() {
-        super(2,  new Point(62,15), new Point(0,8), new Point(0,25), new Image("imgs/and.png"));
+        super(2,  new Point(62,15), new Point(0,8), new Point(0,25), new Image("imgs/and.png"), ComponentType.AND) ;
     }
 
     @Override

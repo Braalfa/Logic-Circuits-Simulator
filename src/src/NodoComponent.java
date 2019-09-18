@@ -1,8 +1,14 @@
+import javafx.scene.layout.AnchorPane;
+
+import java.awt.*;
+
 public class NodoComponent {
     private List<Component> next;
     private NodoComponent prev1;
     private NodoComponent prev2;
     private Component component;
+    private int clonationTimes;
+    private NodoComponent lastClone;
 
     public NodoComponent(Component component){
         this.component=component;
@@ -35,7 +41,49 @@ public class NodoComponent {
         this.prev2 = prev2;
     }
 
+    public void setComponent(Component component) {
+        this.component = component;
+    }
+
     public Component getComponent() {
         return component;
+    }
+
+    public NodoComponent clone(AnchorPane parent, Point diplacement) {
+        clonationTimes++;
+        NodoComponent clone = new NodoComponent(component.clone(parent, diplacement));
+        if(this.prev1!=null){
+            this.cloneLeft(clone,  parent, diplacement);
+        }
+        if(this.prev2!=null){
+            this.cloneRigth(clone,  parent, diplacement);
+        }
+        return clone;
+    }
+
+    private void cloneLeft(NodoComponent clone, AnchorPane parent, Point diplacement){
+        clone.setPrev1(this.prev1.clone(clonationTimes, parent, diplacement));
+        clone.getPrev1().getNext().addEnd(clone.getComponent());
+    }
+    private void cloneRigth(NodoComponent clone, AnchorPane parent, Point diplacement){
+        clone.setPrev2(this.prev2.clone(clonationTimes, parent, diplacement));
+        clone.getPrev2().getNext().addEnd(clone.getComponent());
+    }
+
+    private NodoComponent clone(int currentClonationTimes, AnchorPane parent, Point diplacement){
+       if(this.getClonationTimes()==currentClonationTimes){
+           return this.getLastClone();
+       }else{
+           return this.clone(parent, diplacement);
+       }
+
+    }
+
+    public int getClonationTimes() {
+        return clonationTimes;
+    }
+
+    public NodoComponent getLastClone() {
+        return lastClone;
     }
 }

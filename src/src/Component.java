@@ -1,7 +1,11 @@
+import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -10,6 +14,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 abstract class Component extends ImageView{
+    private ComponentType type;
     private int inputs;
     private Point outputCoords;
     private Point inputCoordsl;
@@ -21,6 +26,8 @@ abstract class Component extends ImageView{
     protected OutputTag outputTag;
     protected InputTag inputTag1;
     protected InputTag inputTag2;
+    private double componentOrgX;
+    private double componentOrgY;
 
     public boolean getInput1() {
         return input1;
@@ -46,7 +53,7 @@ abstract class Component extends ImageView{
         this.output = output;
     }
 
-    public Component(int inputs, Point outputCoords, Point inputCoordsl, Point inputCoords2, Image image){
+    public Component(int inputs, Point outputCoords, Point inputCoordsl, Point inputCoords2, Image image, ComponentType type){
         this.inputs=inputs;
         this.outputCoords=outputCoords;
         this.inputCoordsl=inputCoordsl;
@@ -57,7 +64,9 @@ abstract class Component extends ImageView{
         this.setCursor(Cursor.HAND);
         this.setPickOnBounds(true);
         this.setId("comp"+nextid);
+        this.type=type;
         nextid++;
+        this.setMovementHandlers();
     }
 
     protected void setUpLabels(){
@@ -103,4 +112,57 @@ abstract class Component extends ImageView{
     }
 
     abstract public boolean calculate();
+
+    public void setOutputTag(OutputTag outputTag) {
+        this.outputTag = outputTag;
+    }
+
+    public void setInputTag1(InputTag inputTag1) {
+        this.inputTag1 = inputTag1;
+    }
+
+    public void setInputTag2(InputTag inputTag2) {
+        this.inputTag2 = inputTag2;
+    }
+
+    public Component clone(AnchorPane parent, Point diplacement){
+        Component clone = Component_Factory.getComponent(this.type);
+        parent.getChildren().add(clone);
+        clone.setX(this.getX()+diplacement.getX());
+        clone.setY(this.getY()+diplacement.getY());
+        if(inputs==2){
+            clone.setInputTag2(inputTag2.clone(parent,clone, diplacement));
+        }
+        clone.setInputTag1(inputTag1.clone(parent, clone,diplacement));
+        clone.setOutputTag(outputTag.clone(parent,clone,diplacement));
+        return clone;
+    }
+
+    public void setMovementHandlers() {
+        Component component=this;
+        this.setOnMousePressed( new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    componentOrgX = -component.getX() + event.getX();
+                    componentOrgY = -component.getY() +event.getY();
+                }else if(event.getButton()==MouseButton.SECONDARY){
+                    component.destroy();
+                }
+            }
+        });
+        this.setOnMouseDragged( new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    component.setX(event.getX()-componentOrgX);
+                    component.setY(event.getY()-componentOrgY);
+                    component.updateTagsPositions();
+                }
+            }
+        });
+
+    }
+
+
 }

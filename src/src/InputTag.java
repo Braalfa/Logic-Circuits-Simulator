@@ -11,6 +11,14 @@ public class InputTag extends Tag {
 
     public InputTag(AnchorPane parent, Point coords, Component component, int inputNumber) {
         super(parent,coords, component);
+        this.updateId();
+        this.display(this.getId());
+        this.coords.setLocation(coords.getX()-this.getWidth(),coords.getY()-this.getHeight()/2);
+        this.inputNumber=inputNumber;
+
+    }
+
+    public void updateId(){
         String text;
         if (unusedIds.isEmpty()){
             text="i<"+currentId+">";
@@ -20,10 +28,15 @@ public class InputTag extends Tag {
             unusedIds.remove(0);
         }
         this.setId(text);
-        this.display(text);
-        this.coords.setLocation(coords.getX()-this.getWidth(),coords.getY()-this.getHeight()/2);
-        this.inputNumber=inputNumber;
+    }
 
+    public InputTag clone(AnchorPane parent, Component component, Point diplacement){
+        InputTag clone= new InputTag(parent, coords, component, inputNumber);
+        clone.setLayoutX(this.getLayoutX()+diplacement.getX());
+        clone.setLayoutY(this.getLayoutY()+diplacement.getY());
+        clone.setLines(this.cloneLines(diplacement));
+        clone.setLinesColor(clone.getLinesColor());
+        return clone;
     }
 
     public int getInputNumber() {

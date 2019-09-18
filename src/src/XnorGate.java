@@ -7,7 +7,7 @@ public class XnorGate extends Component {
 
     public XnorGate() {
 
-        super(2,  new Point(67,16), new Point(0,10), new Point(0,23), new Image("imgs/xnor.png"));
+        super(2,  new Point(67,16), new Point(0,10), new Point(0,23), new Image("imgs/xnor.png"), ComponentType.XNOR);
     }
 
     @Override

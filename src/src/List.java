@@ -56,6 +56,30 @@ public class List<T> {
         this.first = nodo;
     }
 
+    public void addAll(List<T> list){
+        boolean added= false;
+        Nodo nodo = this.first;
+        if(this.first != null){
+            while(!added)
+            {
+                if(nodo.getNext()==null){
+                    nodo.setNext(new Nodo(list.get(0)));
+                    added=true;
+                    nodo = nodo.getNext();
+                }else{
+                    nodo = nodo.getNext();
+                }
+            }
+        }else{
+            first = new Nodo(list.get(0));
+        }
+        int limit=list.count();
+        for(int i=1;i<limit;i++){
+            nodo.setNext(new Nodo(list.get(i)));
+            nodo=nodo.getNext();
+        }
+    }
+
     public T get(int index) {
         int counter = 0;
         Nodo<T> nodo = this.first;
@@ -113,27 +137,6 @@ public class List<T> {
 
     }
 
-    public ArrayList buscarTodos(T element)
-    {
-        int pos = 0;
-        ArrayList<Integer> lista = new ArrayList<Integer>();
-        Nodo nodo= this.first;
-        boolean found =false;
-
-        while(nodo!=null){
-            if(nodo.getElement().equals(element) ){
-                found = true;
-                lista.add(pos);
-
-            }else{}
-            pos++;
-            nodo = nodo.getNext();
-        }
-
-        return lista;
-
-    }
-
     public boolean delete(T element)
     {
         Nodo nodoAnterior= this.first;
@@ -154,4 +157,5 @@ public class List<T> {
             return false;
         }
     }
+
 }

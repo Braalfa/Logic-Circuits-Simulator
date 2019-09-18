@@ -1,15 +1,25 @@
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -22,7 +32,13 @@ public class ControladorFXML {
 
     @FXML
     private Button simulateBtn;
+    @FXML
+    private Button saveBtn;
+
     private ImageView componentSelected;
+    private ArrayList<SuperComponent> superComponents;
+
+    private ArrayList<String> ilegalNames;
 
     private double xOffSetDrag;
     private double yOffSetDrag;
@@ -37,13 +53,27 @@ public class ControladorFXML {
     @FXML
     public void initialize(){
         ObservableList<Node> components=componentsVbox.getChildren();
-
+        ilegalNames=new ArrayList<>();
+        superComponents=new ArrayList<>();
         for(Node component: components){
-            setUpDrag((ImageView) component);
-
+            setUpDrag(component);
+            ilegalNames.add(component.getId());
         }
         simulateBtn.setOnAction(this::handleButtonAction);
+        saveBtn.setOnAction(this::handleSaveButtonAction);
         setUpDrop();
+    }
+
+    private void handleSaveButtonAction(ActionEvent event) {
+        String name= Interfaz.inputDialog("Nombre", "Ingrese el nombre del componente");
+        if(name!=null && !ilegalNames.contains(name)){
+            SuperComponent superComponent=this.createSuperComponent(name);
+            superComponents.add(superComponent);
+            componentsVbox.getChildren().add(superComponent);
+            ilegalNames.add(name);
+        }else{
+            Interfaz.popUp("Error","Debe digitarse un nombre adecuado" );
+        }
     }
 
     private void handleButtonAction(ActionEvent event)
@@ -104,7 +134,7 @@ public class ControladorFXML {
             }
         });
     }
-    public void setUpDrag(ImageView source){
+    public void setUpDrag(Node source){
         source.setOnDragDetected(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 /* drag was detected, start a drag-and-drop gesture*/
@@ -113,11 +143,20 @@ public class ControladorFXML {
 
                 /* Put a string on a dragboard */
                 ClipboardContent content = new ClipboardContent();
-                content.putString(source.getId());
+                if(source instanceof ImageView) {
+                    content.putString("<C>"+source.getId());
+                    db.setDragView(((ImageView) source).getImage());
+                    db.setDragViewOffsetX(event.getX());
+                    db.setDragViewOffsetY(event.getY());
+
+                }else{
+                    content.putString("<S>"+((SuperComponent)source).getText());
+                    db.setDragView(((SuperComponent) source).getImage());
+                    db.setDragViewOffsetX(((SuperComponent) source).getBounds().getWidth()/2);
+                    db.setDragViewOffsetY(((SuperComponent) source).getBounds().getHeight()/2);
+
+                }
                 db.setContent(content);
-                db.setDragView(source.getImage());
-                db.setDragViewOffsetX(event.getX());
-                db.setDragViewOffsetY(event.getY());
 
                 xOffSetDrag= event.getX();
                 yOffSetDrag= event.getY();
@@ -135,6 +174,7 @@ public class ControladorFXML {
             }
         });
     }
+
     public void setUpDrop() {
         circuitPane.setOnDragOver(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
@@ -178,20 +218,25 @@ public class ControladorFXML {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasString()) {
-                    String id= (String)db.getContent(DataFormat.PLAIN_TEXT);
-                    double xPos=event.getX();
-                    double yPos=event.getY();
-                    id = id.toUpperCase();
+                    String transferText= (String)db.getContent(DataFormat.PLAIN_TEXT);
+                    if(transferText.substring(0,3).equals("<C>")) {
+                        String id=transferText.substring(3);
+                        double xPos = event.getX();
+                        double yPos = event.getY();
+                        id = id.toUpperCase();
 
-                    Component component = Component_Factory.getComponent(ComponentType.valueOf(id));
-                    circuitPane.getChildren().add(component);
-                    component.setX(xPos-xOffSetDrag);
-                    component.setY(yPos-yOffSetDrag);
+                        Component component = Component_Factory.getComponent(ComponentType.valueOf(id));
+                        circuitPane.getChildren().add(component);
+                        component.setX(xPos - xOffSetDrag);
+                        component.setY(yPos - yOffSetDrag);
 
-                    SuperTree.getInstance().add(component);
-                    setMovementHandlers(component);
-                    component.setUpLabels();
-                    success=true;
+                        SuperTree.getInstance().add(component);
+                        component.setUpLabels();
+                        success = true;
+                    }else{
+                        addSuperComponent(getSuperComponent(transferText.substring(3)), new Point((int)event.getX(),(int)event.getY()));
+                        success=true;
+                    }
                 }
                 /* let the source know whether the string was successfully
                  * transferred and used */
@@ -203,29 +248,30 @@ public class ControladorFXML {
 
     }
 
-    public void setMovementHandlers(Component component) {
+    public SuperComponent getSuperComponent(String name){
+        for(SuperComponent superComponent:superComponents){
+            if(superComponent.getText().equals(name)){
+                return superComponent;
+            }
+        }
+        return null;
+    }
 
-        component.setOnMousePressed( new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    componentOrgX = -component.getX() + event.getX();
-                    componentOrgY = -component.getY() +event.getY();
-                }else if(event.getButton()==MouseButton.SECONDARY){
-                    component.destroy();
-                }
-            }
-        });
-        component.setOnMouseDragged( new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    component.setX(event.getX()-componentOrgX);
-                    component.setY(event.getY()-componentOrgY);
-                    component.updateTagsPositions();
-                }
-            }
-        });
+
+    public SuperComponent createSuperComponent(String name){
+        SuperComponent superComponent= new SuperComponent(name, circuitPane);
+        this.setUpDrag(superComponent);
+        return superComponent;
+    }
+
+    public void addSuperComponent(SuperComponent superComponent, Point cliqCoords){
+        int centerX = (int)superComponent.getBounds().getWidth()/2;
+        int centerY = (int)superComponent.getBounds().getHeight()/2;
+        superComponent.generate(circuitPane, new Point((int)cliqCoords.getX()-centerX,(int)cliqCoords.getY()-centerY));
 
     }
+
+
+
+
 }
