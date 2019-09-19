@@ -38,7 +38,7 @@ public class SuperComponent extends Label {
         this.clone= SuperTree.getInstance().clone(copyPane,new Point(0,0));
         this.elements=copyPane.getChildren();
         this.setText(name);
-        this.setBounds((int)parent.getLayoutBounds().getWidth(),(int)parent.getLayoutBounds().getHeight());
+        this.setBounds((int)parent.getLayoutBounds().getWidth(),(int)parent.getLayoutBounds().getHeight(), ((AnchorPane)parent).getChildren());
         this.setImage(name,parent);
         this.updatePositions();
     }
@@ -101,7 +101,7 @@ public class SuperComponent extends Label {
         return image;
     }
 
-    public void setBounds(int maxXParent, int maxYParent){
+    public void setBounds(int maxXParent, int maxYParent, ObservableList<Node> elements){
         int minX=maxXParent;
         int minY=maxYParent;
         int maxX=0;
@@ -118,9 +118,14 @@ public class SuperComponent extends Label {
                 if (currentY < minY) {
                     minY = currentY;
                 }
-                currentX += (int) node.getBoundsInParent().getWidth();
-                currentY += (int) node.getBoundsInParent().getHeight();
+                if(node instanceof Tag) {
+                    currentX += (int) ((Tag)node).getWidth();
+                    currentY += (int) ((Tag)node).getHeight();
+                }else{
+                    currentX += (int) node.getLayoutBounds().getWidth();
+                    currentY += (int) node.getLayoutBounds().getHeight();
 
+                }
                 if (currentX > maxX) {
                     maxX = currentX;
                 }
