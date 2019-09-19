@@ -91,28 +91,29 @@ public abstract class Tag extends Label {
                 ScrollPane scrollpane = (ScrollPane) component.getScene().lookup("#scrollPane");
                 source.setLayoutX(event.getSceneX()+scrollpane.getHvalue()*(parent.getWidth()-scrollpane.getViewportBounds().getWidth())-relClickX);
                 source.setLayoutY(event.getSceneY()+scrollpane.getVvalue()*(parent.getHeight()-scrollpane.getViewportBounds().getHeight())-relClickY);
-                Line thisLine= lines.get(lines.size()-1);
-                if (!source.overlapsComponents(thisLine)) {
-                    if (Math.abs(source.getLayoutX() - thisLine.getStartX()) > Math.abs(source.getLayoutY() - thisLine.getStartY())) {
-                        thisLine.setEndX(source.getLayoutX());
-                        thisLine.setEndY(thisLine.getStartY());
-                    } else {
-                        thisLine.setEndY(source.getLayoutY());
-                        thisLine.setEndX(thisLine.getStartX());
-                    }
+                if(lines.size()>=1) {
+                    Line thisLine = lines.get(lines.size() - 1);
                     if (!source.overlapsComponents(thisLine)) {
-                        thisLine.setVisible(true);
-                    }else{
+                        if (Math.abs(source.getLayoutX() - thisLine.getStartX()) > Math.abs(source.getLayoutY() - thisLine.getStartY())) {
+                            thisLine.setEndX(source.getLayoutX());
+                            thisLine.setEndY(thisLine.getStartY());
+                        } else {
+                            thisLine.setEndY(source.getLayoutY());
+                            thisLine.setEndX(thisLine.getStartX());
+                        }
+                        if (!source.overlapsComponents(thisLine)) {
+                            thisLine.setVisible(true);
+                        } else {
+                            thisLine.setEndY(thisLine.getStartY());
+                            thisLine.setEndX(thisLine.getStartX());
+                        }
+                    } else {
                         thisLine.setEndY(thisLine.getStartY());
                         thisLine.setEndX(thisLine.getStartX());
+                        thisLine.setVisible(false);
+
                     }
-                }else{
-                    thisLine.setEndY(thisLine.getStartY());
-                    thisLine.setEndX(thisLine.getStartX());
-                    thisLine.setVisible(false);
-
                 }
-
                 event.consume();
 
             }

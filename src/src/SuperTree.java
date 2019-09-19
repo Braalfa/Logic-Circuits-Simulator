@@ -262,4 +262,59 @@ public class SuperTree {
         return superTreeClone;
     }
 
+    public String[][] getTrueTable(){
+        ArrayList<InputTag> inputs= this.getFreeInputTags();
+        boolean[][] table= new boolean[inputs.size()+this.getOutputComponents().count()][(int)Math.pow(2,inputs.size())];
+
+        for(int i=0;i<inputs.size();i++){
+            for(int j=0;j<table[0].length;j++){
+                int secuence=(int)Math.pow(2,inputs.size()-i-1);
+                if((j/secuence)%2==0){
+                    table[i][j]=false;
+                }else{
+                    table[i][j]=true;
+                }
+            }
+        }
+        this.fillTrueTable(table, inputs);
+
+        String[][] finalTable = new String[table[0].length+1][table.length];
+        for(int i=0;i<inputs.size();i++){
+            finalTable[0][i]=inputs.get(i).getId();
+        }
+        for(int i=inputs.size();i<finalTable[0].length;i++){
+            finalTable[0][i]=outputComponents.get(i-inputs.size()).getComponent().getOutputTag().getId();
+        }
+        for(int i=0;i<finalTable[0].length;i++){
+            for(int j=1;j<finalTable.length;j++){
+                if(table[i][j-1]){
+                    finalTable[j][i]="1";
+                }else{
+                    finalTable[j][i]="0";
+                }
+            }
+        }
+
+        return finalTable;
+    }
+
+    public void fillTrueTable(boolean[][] table, ArrayList<InputTag> inputs){
+        for(int j = 0;j<table[0].length;j++){
+            for(int i=0; i<inputs.size();i++){
+                InputTag current=inputs.get(i);
+                if(current.getInputNumber()==1){
+                    current.getComponent().setInput1(table[i][j]);
+                }else{
+                    current.getComponent().setInput2(table[i][j]);
+                }
+            }
+            this.calculateOutput();
+            int numOutputs= this.outputComponents.count();
+            for(int h=inputs.size();h<numOutputs+inputs.size();h++){
+                boolean value= this.outputComponents.get(h-inputs.size()).getComponent().getOutput();
+                table[h][j]=value;
+            }
+        }
+    }
+
 }

@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -34,7 +35,8 @@ public class ControladorFXML {
     private Button simulateBtn;
     @FXML
     private Button saveBtn;
-
+    @FXML
+    private Button tableBtn;
     @FXML
     private ScrollPane scrollPane;
 
@@ -62,24 +64,37 @@ public class ControladorFXML {
             setUpDrag(component);
             ilegalNames.add(component.getId());
         }
-        simulateBtn.setOnAction(this::handleButtonAction);
+        simulateBtn.setOnAction(this::handleSimulateButtonAction);
         saveBtn.setOnAction(this::handleSaveButtonAction);
+        tableBtn.setOnAction(this::handleTableButtonAction);
         setUpDrop();
     }
 
     private void handleSaveButtonAction(ActionEvent event) {
-        String name= Interfaz.inputDialog("Nombre", "Ingrese el nombre del componente");
-        if(name!=null && !ilegalNames.contains(name)){
-            SuperComponent superComponent=this.createSuperComponent(name);
-            superComponents.add(superComponent);
-            componentsVbox.getChildren().add(superComponent);
-            ilegalNames.add(name);
-        }else{
-            Interfaz.popUp("Error","Debe digitarse un nombre adecuado" );
+        List<Component> components=SuperTree.getInstance().getOutComponents();
+        if(components.count()>0) {
+            String name = Interfaz.inputDialog("Nombre", "Ingrese el nombre del componente");
+            if (name != null && !ilegalNames.contains(name)) {
+                SuperComponent superComponent = this.createSuperComponent(name);
+                superComponents.add(superComponent);
+                componentsVbox.getChildren().add(superComponent);
+                VBox.setMargin(superComponent, new Insets(5, 0, 5, 0));
+                ilegalNames.add(name);
+            } else {
+                Interfaz.popUp("Error", "Debe digitarse un nombre adecuado");
+            }
         }
     }
 
-    private void handleButtonAction(ActionEvent event)
+    private void handleTableButtonAction(ActionEvent event){
+        ArrayList<InputTag> tags=SuperTree.getInstance().getFreeInputTags();
+        if(tags.size()>0){
+            String[][] table=SuperTree.getInstance().getTrueTable();
+            Interfaz.showTable(table,"Tabla de Verdad");
+        }else{}
+    }
+
+    private void handleSimulateButtonAction(ActionEvent event)
     {
         SuperTree superTree = SuperTree.getInstance();
         ArrayList<InputTag> tags=superTree.getFreeInputTags();
@@ -101,25 +116,31 @@ public class ControladorFXML {
             if(values!=null) {
                 superTree.calculateOutput();
                 List<Component> componentList = superTree.getOutComponents();
-                String results = "";
-                for (int i = 0; i < componentList.count(); i++) {
-                    Component component = componentList.get(i);
-                    int result=0;
-                    if(component.getOutput()){
-                        result=1;
-                    }
-                    results += String.format("%1$-30s%2$-30s\n", component.getOutputTag().getId() + ":", result + "");
-                }
-                String inputs="";
+                int outputsNumber =componentList.count();
+
+                String[][] results= new String[2][tags.size()+outputsNumber];
+
                 for (int i = 0; i < tags.size(); i++) {
                     InputTag tag=tags.get(i);
-                    int result=0;
+                    String result="0";
                     if(values[i]){
-                        result=1;
+                        result="1";
                     }
-                    inputs += String.format("%1$-30s%2$-30s\n", tag.getId() + ":", result + "");
+                    results[0][i]=tag.getId();
+                    results[1][i]=result;
                 }
-                Interfaz.popUp("Resultados", "Los resultados son:\n" + results+"\nLas entradas son:\n"+inputs);
+
+                for (int i = tags.size(); i < tags.size()+outputsNumber; i++) {
+                    Component component = componentList.get(i-tags.size());
+                    String result="0";
+                    if(component.getOutput()){
+                        result="1";
+                    }
+                    results[0][i]=component.getOutputTag().getId();
+                    results[1][i]=result;
+
+                }
+                Interfaz.showTable(results,"Resultado");
             }
         }
     }
