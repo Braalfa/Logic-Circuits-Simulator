@@ -77,6 +77,7 @@ public class SuperComponent extends Label {
     public File saveImageAsPng(String name, Parent parent) {
         SnapshotParameters snapshotParameters= new SnapshotParameters();
         snapshotParameters.setViewport(this.getBounds());
+        System.out.print(this.getBounds());
         WritableImage image = parent.snapshot(snapshotParameters, null);
 
         File file = new File("src/src/imgs/"+name+".png");
@@ -107,16 +108,16 @@ public class SuperComponent extends Label {
         int currentY;
         for(Node node: elements){
             if(node instanceof Component || node instanceof Line ||node instanceof Tag) {
-                currentX = (int) node.getLayoutBounds().getMinX();
-                currentY = (int) node.getLayoutBounds().getMinY();
+                currentX = (int) node.getBoundsInParent().getMinX();
+                currentY = (int) node.getBoundsInParent().getMinY();
                 if (currentX < minX) {
                     minX = currentX;
                 }
                 if (currentY < minY) {
                     minY = currentY;
                 }
-                currentX += (int) node.getLayoutBounds().getWidth();
-                currentY += (int) node.getLayoutBounds().getHeight();
+                currentX += (int) node.getBoundsInParent().getWidth();
+                currentY += (int) node.getBoundsInParent().getHeight();
 
                 if (currentX > maxX) {
                     maxX = currentX;
