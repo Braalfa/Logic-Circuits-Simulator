@@ -131,10 +131,10 @@ abstract class Component extends ImageView{
         clone.setX(this.getX()+diplacement.getX());
         clone.setY(this.getY()+diplacement.getY());
         if(inputs==2){
-            clone.setInputTag2(inputTag2.clone(parent,clone, diplacement));
+            clone.setInputTag2(inputTag2.clone(parent,clone,inputCoords2, diplacement));
         }
-        clone.setInputTag1(inputTag1.clone(parent, clone,diplacement));
-        clone.setOutputTag(outputTag.clone(parent,clone,diplacement));
+        clone.setInputTag1(inputTag1.clone(parent, clone, inputCoordsl,diplacement));
+        clone.setOutputTag(outputTag.clone(parent,clone, outputCoords,diplacement));
         return clone;
     }
 

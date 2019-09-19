@@ -205,13 +205,13 @@ public abstract class Tag extends Label {
         this.setLayoutX(coords.getX() + component.getX());
         this.setLayoutY(coords.getY() + component.getY());
     }
+
     public void disconect(){
         this.clearAllNeighboors();
         this.clearLines();
         this.setLinesColor(this.getLinesColor());
         this.setLayoutX(coords.getX() + component.getX());
         this.setLayoutY(coords.getY() + component.getY());
-
     }
 
 
@@ -373,12 +373,13 @@ public abstract class Tag extends Label {
         this.lines = new ArrayList<>();
     }
 
-    public ArrayList<Line> cloneLines(Point diplacement){
+    public ArrayList<Line> cloneLines(Point diplacement, AnchorPane parent){
         Line copyLine;
         ArrayList<Line> linesCopy=new ArrayList<>();
         for(Line line:lines){
             copyLine=new Line(line.getStartX()+diplacement.getX(),line.getStartY()+diplacement.getY(),line.getEndX()+diplacement.getX(),line.getEndY()+diplacement.getY());
             linesCopy.add(copyLine);
+            parent.getChildren().add(copyLine);
         }
         return linesCopy;
     }

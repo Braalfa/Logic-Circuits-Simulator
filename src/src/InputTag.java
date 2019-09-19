@@ -30,12 +30,13 @@ public class InputTag extends Tag {
         this.setId(text);
     }
 
-    public InputTag clone(AnchorPane parent, Component component, Point diplacement){
+    public InputTag clone(AnchorPane parent, Component component, Point coords, Point diplacement){
         InputTag clone= new InputTag(parent, coords, component, inputNumber);
         clone.setLayoutX(this.getLayoutX()+diplacement.getX());
         clone.setLayoutY(this.getLayoutY()+diplacement.getY());
-        clone.setLines(this.cloneLines(diplacement));
+        clone.setLines(this.cloneLines(diplacement,parent));
         clone.setLinesColor(clone.getLinesColor());
+        clone.setVisible(this.isVisible());
         return clone;
     }
 

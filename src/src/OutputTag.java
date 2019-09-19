@@ -20,13 +20,13 @@ public class OutputTag extends Tag {
         this.nextTag.add(nextTag);
     }
 
-    public OutputTag clone(AnchorPane parent, Component component, Point diplacement){
+    public OutputTag clone(AnchorPane parent, Component component, Point coords, Point diplacement){
         OutputTag clone= new OutputTag(parent, coords, component);
         clone.setLayoutX(this.getLayoutX()+diplacement.getX());
         clone.setLayoutY(this.getLayoutY()+diplacement.getY());
-        clone.setLines(this.cloneLines(diplacement));
+        clone.setLines(this.cloneLines(diplacement, parent));
         clone.setLinesColor(clone.getLinesColor());
-
+        clone.setVisible(this.isVisible());
         return clone;
     }
 

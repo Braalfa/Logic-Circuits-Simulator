@@ -35,6 +35,9 @@ public class ControladorFXML {
     @FXML
     private Button saveBtn;
 
+    @FXML
+    private ScrollPane scrollPane;
+
     private ImageView componentSelected;
     private ArrayList<SuperComponent> superComponents;
 
@@ -234,7 +237,7 @@ public class ControladorFXML {
                         component.setUpLabels();
                         success = true;
                     }else{
-                        addSuperComponent(getSuperComponent(transferText.substring(3)), new Point((int)event.getX(),(int)event.getY()));
+                        addSuperComponent(getSuperComponent(transferText.substring(3)), new Point((int)event.getSceneX(),(int)event.getSceneY()));
                         success=true;
                     }
                 }
@@ -267,6 +270,7 @@ public class ControladorFXML {
     public void addSuperComponent(SuperComponent superComponent, Point cliqCoords){
         int centerX = (int)superComponent.getBounds().getWidth()/2;
         int centerY = (int)superComponent.getBounds().getHeight()/2;
+
         superComponent.generate(circuitPane, new Point((int)cliqCoords.getX()-centerX,(int)cliqCoords.getY()-centerY));
 
     }

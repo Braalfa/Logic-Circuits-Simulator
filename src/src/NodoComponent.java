@@ -64,10 +64,18 @@ public class NodoComponent {
     private void cloneLeft(NodoComponent clone, AnchorPane parent, Point diplacement){
         clone.setPrev1(this.prev1.clone(clonationTimes, parent, diplacement));
         clone.getPrev1().getNext().addEnd(clone.getComponent());
+        Tag input= clone.getComponent().getInputTag1();
+        Tag output= clone.getPrev1().getComponent().getOutputTag();
+        input.getNextTag().add(output);
+        output.getNextTag().add(input);
     }
     private void cloneRigth(NodoComponent clone, AnchorPane parent, Point diplacement){
         clone.setPrev2(this.prev2.clone(clonationTimes, parent, diplacement));
         clone.getPrev2().getNext().addEnd(clone.getComponent());
+        Tag input= clone.getComponent().getInputTag2();
+        Tag output= clone.getPrev2().getComponent().getOutputTag();
+        input.getNextTag().add(output);
+        output.getNextTag().add(input);
     }
 
     private NodoComponent clone(int currentClonationTimes, AnchorPane parent, Point diplacement){
