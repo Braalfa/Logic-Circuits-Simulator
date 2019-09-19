@@ -58,6 +58,7 @@ public class NodoComponent {
         if(this.prev2!=null){
             this.cloneRigth(clone,  parent, diplacement);
         }
+        lastClone=clone;
         return clone;
     }
 

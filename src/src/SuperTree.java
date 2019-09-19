@@ -227,6 +227,28 @@ public class SuperTree {
         this.outputComponents = outputComponents;
     }
 
+    public boolean willFeedback(Component nextComp, Component prevComp){
+        NodoComponent first= this.getNode(prevComp);
+        NodoComponent match = this.getNode(nextComp);
+        return this.willFeedback(match,first);
+    }
+
+    private boolean willFeedback(NodoComponent match,NodoComponent currentNode){
+        boolean result=false;
+        if (currentNode.getPrev1() == match|| currentNode.getPrev2()==match) {
+            result= true;
+        } else {
+            if(currentNode.getPrev1() != null) {
+                result= this.willFeedback(match, currentNode.getPrev1());
+            }
+            if(!result && currentNode.getPrev2() != null) {
+                result = this.willFeedback(match, currentNode.getPrev2());
+            }
+        }
+        return result;
+
+
+    }
 
     public SuperTree clone(AnchorPane parent, Point diplacement){
         NodoComponent nodo;

@@ -237,7 +237,7 @@ public class ControladorFXML {
                         component.setUpLabels();
                         success = true;
                     }else{
-                        addSuperComponent(getSuperComponent(transferText.substring(3)), new Point((int)event.getSceneX(),(int)event.getSceneY()));
+                        addSuperComponent(getSuperComponent(transferText.substring(3)), new Point((int)event.getX(),(int)event.getY()));
                         success=true;
                     }
                 }

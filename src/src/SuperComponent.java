@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 import javax.imageio.ImageIO;
@@ -77,6 +78,7 @@ public class SuperComponent extends Label {
     public File saveImageAsPng(String name, Parent parent) {
         SnapshotParameters snapshotParameters= new SnapshotParameters();
         snapshotParameters.setViewport(this.getBounds());
+        snapshotParameters.setFill(Color.TRANSPARENT);
         System.out.print(this.getBounds());
         WritableImage image = parent.snapshot(snapshotParameters, null);
 
