@@ -6,9 +6,11 @@ import java.util.ArrayList;
 public class SuperTree {
     private List<NodoComponent> outputComponents;
     private static SuperTree instance;
+    private double currentCalculation;
 
     public SuperTree() {
         outputComponents = new List<>();
+        currentCalculation=0;
     }
 
     public static SuperTree getInstance() {
@@ -65,7 +67,7 @@ public class SuperTree {
         this.setFreeOutput(nodo);
     }
 
-    public void disconnectFromChildren(NodoComponent nodo) {
+    private void disconnectFromChildren(NodoComponent nodo) {
         if (nodo != null) {
             if (nodo.getPrev1() != null) {
                 NodoComponent nodoChild = nodo.getPrev1();
@@ -175,21 +177,32 @@ public class SuperTree {
 
     public void calculateOutput() {
         NodoComponent nodo;
+        currentCalculation++;
         for (int i = 0; i < outputComponents.count(); i++) {
             nodo = outputComponents.get(i);
             this.calculateOutput(nodo);
         }
-
     }
 
     private void calculateOutput(NodoComponent currentNode) {
-        if (currentNode.getPrev1() != null) {
-            calculateOutput(currentNode.getPrev1());
-            currentNode.getComponent().setInput1(currentNode.getPrev1().getComponent().getOutput());
+        NodoComponent prev1= currentNode.getPrev1();
+        NodoComponent prev2= currentNode.getPrev2();
+        Component component;
+        if (prev1!= null) {
+            component=prev1.getComponent();
+            if (component.getLastCalculation()!=currentCalculation) {
+                calculateOutput(currentNode.getPrev1());
+                component.setLastCalculation(currentCalculation);
+                currentNode.getComponent().setInput1(currentNode.getPrev1().getComponent().getOutput());
+            }
         }
-        if (currentNode.getPrev2() != null) {
-            calculateOutput(currentNode.getPrev2());
-            currentNode.getComponent().setInput2(currentNode.getPrev2().getComponent().getOutput());
+        if (prev2 != null) {
+            component=prev2.getComponent();
+            if (component.getLastCalculation()!=currentCalculation) {
+                component.setLastCalculation(currentCalculation);
+                calculateOutput(currentNode.getPrev2());
+                currentNode.getComponent().setInput2(currentNode.getPrev2().getComponent().getOutput());
+            }
         }
         currentNode.getComponent().calculate();
     }
@@ -264,11 +277,13 @@ public class SuperTree {
 
     public String[][] getTrueTable(){
         ArrayList<InputTag> inputs= this.getFreeInputTags();
-        boolean[][] table= new boolean[inputs.size()+this.getOutputComponents().count()][(int)Math.pow(2,inputs.size())];
+        int inputsSize=inputs.size();
+        int outputsSize=this.getOutputComponents().count();
+        boolean[][] table= new boolean[inputsSize+outputsSize][(int)Math.pow(2,inputsSize)];
 
         for(int i=0;i<inputs.size();i++){
+            int secuence=(int)Math.pow(2,inputsSize-i-1);
             for(int j=0;j<table[0].length;j++){
-                int secuence=(int)Math.pow(2,inputs.size()-i-1);
                 if((j/secuence)%2==0){
                     table[i][j]=false;
                 }else{
@@ -279,11 +294,11 @@ public class SuperTree {
         this.fillTrueTable(table, inputs);
 
         String[][] finalTable = new String[table[0].length+1][table.length];
-        for(int i=0;i<inputs.size();i++){
+        for(int i=0;i<inputsSize;i++){
             finalTable[0][i]=inputs.get(i).getId();
         }
-        for(int i=inputs.size();i<finalTable[0].length;i++){
-            finalTable[0][i]=outputComponents.get(i-inputs.size()).getComponent().getOutputTag().getId();
+        for(int i=inputsSize;i<finalTable[0].length;i++){
+            finalTable[0][i]=outputComponents.get(i-inputsSize).getComponent().getOutputTag().getId();
         }
         for(int i=0;i<finalTable[0].length;i++){
             for(int j=1;j<finalTable.length;j++){
@@ -299,19 +314,22 @@ public class SuperTree {
     }
 
     public void fillTrueTable(boolean[][] table, ArrayList<InputTag> inputs){
+        int inputsSize=inputs.size();
+        int numOutputs= this.outputComponents.count();
+        int limit=numOutputs+inputsSize;
         for(int j = 0;j<table[0].length;j++){
-            for(int i=0; i<inputs.size();i++){
+            for(int i=0; i<inputsSize;i++){
                 InputTag current=inputs.get(i);
+                Component component=current.getComponent();
                 if(current.getInputNumber()==1){
-                    current.getComponent().setInput1(table[i][j]);
+                    component.setInput1(table[i][j]);
                 }else{
-                    current.getComponent().setInput2(table[i][j]);
+                    component.setInput2(table[i][j]);
                 }
             }
             this.calculateOutput();
-            int numOutputs= this.outputComponents.count();
-            for(int h=inputs.size();h<numOutputs+inputs.size();h++){
-                boolean value= this.outputComponents.get(h-inputs.size()).getComponent().getOutput();
+            for(int h=inputsSize;h<limit;h++){
+                boolean value= this.outputComponents.get(h-inputsSize).getComponent().getOutput();
                 table[h][j]=value;
             }
         }

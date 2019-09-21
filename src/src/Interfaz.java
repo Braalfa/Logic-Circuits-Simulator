@@ -145,7 +145,7 @@ public class Interfaz extends Application {
             });
             tableView.getColumns().add(column);
         }
-        int rowHeight=30;
+        int rowHeight=25;
         int headerHeight= 10;
         int margin=10;
         tableView.setItems(data);
@@ -154,19 +154,17 @@ public class Interfaz extends Application {
                 .add(headerHeight)
                 .add(margin));
         tableView.minHeightProperty().bind(tableView.prefHeightProperty());
-        tableView.maxHeightProperty().bind(tableView.prefHeightProperty());
 
         tableView.prefWidthProperty().bind(Bindings.max(2, Bindings.size(tableView.getColumns()))
                 .multiply(50)
                 .add(headerHeight)
                 .add(margin));
-        tableView.maxWidthProperty().bind(tableView.prefWidthProperty());
         tableView.minWidthProperty().bind(tableView.prefWidthProperty());
 
-
+        dialog.setResizable(true);
         scrollPane.setContent(tableView);
         dialog.setHeight(500);
-        dialog.setWidth(300);
+        dialog.setWidth(500);
         dialog.getDialogPane().setContent(scrollPane);
         dialog.showAndWait();
     }

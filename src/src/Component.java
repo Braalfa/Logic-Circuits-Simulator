@@ -28,6 +28,8 @@ abstract class Component extends ImageView{
     protected InputTag inputTag2;
     private double componentOrgX;
     private double componentOrgY;
+    private double lastCalculation;
+
 
     public boolean getInput1() {
         return input1;
@@ -53,6 +55,14 @@ abstract class Component extends ImageView{
         this.output = output;
     }
 
+    public double getLastCalculation() {
+        return lastCalculation;
+    }
+
+    public void setLastCalculation(double lastCalculation) {
+        this.lastCalculation = lastCalculation;
+    }
+
     public Component(int inputs, Point outputCoords, Point inputCoordsl, Point inputCoords2, Image image, ComponentType type){
         this.inputs=inputs;
         this.outputCoords=outputCoords;
@@ -67,6 +77,7 @@ abstract class Component extends ImageView{
         this.type=type;
         nextid++;
         this.setMovementHandlers();
+        this.lastCalculation=0;
     }
 
     protected void setUpLabels(){
