@@ -128,7 +128,6 @@ public class Interfaz extends Application {
         // Set the button types.
         ButtonType loginButtonType = new ButtonType("OK");
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType);
-        ScrollPane scrollPane = new ScrollPane();
 
         TableView<String[]> tableView= new TableView<>();
         ObservableList<String[]> data = FXCollections.observableArrayList();
@@ -145,27 +144,15 @@ public class Interfaz extends Application {
             });
             tableView.getColumns().add(column);
         }
-        int rowHeight=25;
-        int headerHeight= 10;
-        int margin=10;
+
         tableView.setItems(data);
-        tableView.prefHeightProperty().bind(Bindings.max(2, Bindings.size(tableView.getItems()))
-                .multiply(rowHeight)
-                .add(headerHeight)
-                .add(margin));
-        tableView.minHeightProperty().bind(tableView.prefHeightProperty());
-
-        tableView.prefWidthProperty().bind(Bindings.max(2, Bindings.size(tableView.getColumns()))
-                .multiply(50)
-                .add(headerHeight)
-                .add(margin));
-        tableView.minWidthProperty().bind(tableView.prefWidthProperty());
-
+        tableView.setItems(data);
+        tableView.prefHeightProperty().bind(dialog.heightProperty());
+        tableView.prefWidthProperty().bind(dialog.widthProperty());
         dialog.setResizable(true);
-        scrollPane.setContent(tableView);
         dialog.setHeight(500);
-        dialog.setWidth(500);
-        dialog.getDialogPane().setContent(scrollPane);
+        dialog.setWidth(400);
+        dialog.getDialogPane().setContent(tableView);
         dialog.showAndWait();
     }
 
