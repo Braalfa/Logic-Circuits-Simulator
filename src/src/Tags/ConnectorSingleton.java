@@ -1,12 +1,14 @@
+package Tags;
+
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
-
 import java.awt.*;
 import java.util.ArrayList;
-
+import Component.Component;
+import Interfaz.*;
 public class ConnectorSingleton {
     private AnchorPane parent;
     private Tag startTag;

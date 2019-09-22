@@ -1,5 +1,9 @@
-import javafx.scene.layout.AnchorPane;
+package SuperList;
 
+import SimpleList.List;
+import javafx.scene.layout.AnchorPane;
+import Component.Component;
+import Tags.*;
 import java.awt.*;
 
 public class NodoComponent {

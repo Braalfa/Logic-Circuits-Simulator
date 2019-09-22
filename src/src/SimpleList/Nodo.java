@@ -1,4 +1,4 @@
-import java.awt.*;
+package SimpleList;
 
 public class Nodo<T> {
     private Nodo next;

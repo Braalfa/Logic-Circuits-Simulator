@@ -1,19 +1,18 @@
+package Component;
+
+import Tags.InputTag;
+import Tags.OutputTag;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
+import SuperList.*;
+import  java.awt.Point;
 
-import java.awt.*;
-import java.util.ArrayList;
-
-abstract class Component extends ImageView{
+public abstract class Component extends ImageView{
     private ComponentType type;
     private int inputs;
     private Point outputCoords;
@@ -80,7 +79,7 @@ abstract class Component extends ImageView{
         this.lastCalculation=0;
     }
 
-    protected void setUpLabels(){
+    public void setUpLabels(){
         AnchorPane parent=(AnchorPane) this.getParent();
         this.inputTag1=new InputTag(parent, inputCoordsl,this,1);
         this.outputTag=new OutputTag(parent, outputCoords,this);

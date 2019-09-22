@@ -1,19 +1,24 @@
+package Tags;
+
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 
-import java.awt.*;
+import SuperList.*;
 import java.util.ArrayList;
+import java.awt.Point;
 import java.util.Random;
-
+import java.awt.Color;
+import Component.Component;
+import SuperList.*;
 public abstract class Tag extends Label {
     protected Point nodCoords;
     protected Point coords;
@@ -213,7 +218,7 @@ public abstract class Tag extends Label {
     }
 
 
-    private boolean overlaps(Line line, Tag start,Tag end){
+    private boolean overlaps(Line line, Tag start, Tag end){
         boolean result=false;
         Bounds startBn = start.getComponent().getLayoutBounds();
         Bounds endBn = end.getComponent().getLayoutBounds();

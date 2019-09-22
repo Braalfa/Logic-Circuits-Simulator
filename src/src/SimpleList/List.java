@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+package SimpleList;
 
 public class List<T> {
     private Nodo first;

@@ -1,8 +1,11 @@
-import javafx.scene.layout.AnchorPane;
+package SuperList;
 
+import SimpleList.List;
+import javafx.scene.layout.AnchorPane;
+import Component.Component;
 import java.awt.*;
 import java.util.ArrayList;
-
+import Tags.*;
 public class SuperTree {
     private List<NodoComponent> outputComponents;
     private static SuperTree instance;
@@ -246,7 +249,7 @@ public class SuperTree {
         return this.willFeedback(match,first);
     }
 
-    private boolean willFeedback(NodoComponent match,NodoComponent currentNode){
+    private boolean willFeedback(NodoComponent match, NodoComponent currentNode){
         boolean result=false;
         if (currentNode.getPrev1() == match|| currentNode.getPrev2()==match) {
             result= true;
@@ -265,7 +268,7 @@ public class SuperTree {
 
     public SuperTree clone(AnchorPane parent, Point diplacement){
         NodoComponent nodo;
-        List<NodoComponent>  clone=new List<>();
+        List<NodoComponent> clone=new List<>();
         for(int i=0;i<outputComponents.count();i++){
             nodo=outputComponents.get(i);
             clone.addEnd(nodo.clone(parent, diplacement));

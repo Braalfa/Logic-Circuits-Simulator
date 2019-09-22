@@ -1,8 +1,8 @@
-import javafx.scene.Parent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Line;
+package Tags;
 
-import java.awt.*;
+import javafx.scene.layout.AnchorPane;
+import Component.*;
+import java.awt.Point;
 import java.util.ArrayList;
 
 public class OutputTag extends Tag {

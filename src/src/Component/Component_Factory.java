@@ -1,5 +1,4 @@
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+package Component;
 
 public class Component_Factory {
     public static Component getComponent(ComponentType c){

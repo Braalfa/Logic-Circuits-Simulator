@@ -1,27 +1,21 @@
+import SimpleList.List;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Line;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import Component.*;
+import SuperList.*;
+import Interfaz.*;
+import Tags.*;
+import java.awt.Point;
 import java.util.ArrayList;
 
 public class ControladorFXML {
@@ -71,7 +65,7 @@ public class ControladorFXML {
     }
 
     private void handleSaveButtonAction(ActionEvent event) {
-        List<Component> components=SuperTree.getInstance().getOutComponents();
+        SimpleList.List<Component> components=SuperTree.getInstance().getOutComponents();
         if(components.count()>0) {
             String name = Interfaz.inputDialog("Nombre", "Ingrese el nombre del componente");
             if (name != null && !ilegalNames.contains(name)) {

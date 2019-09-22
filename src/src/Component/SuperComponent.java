@@ -1,11 +1,9 @@
-import javafx.collections.FXCollections;
+package Component;
+
+import SimpleList.List;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SnapshotParameters;
@@ -15,9 +13,11 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-
+import SuperList.*;
+import Tags.*;
+import Component.*;
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 
