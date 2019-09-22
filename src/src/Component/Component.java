@@ -74,10 +74,7 @@ public abstract class Component extends ImageView{
      * Posicion original del componente en y antes de ser arrastrado
      */
     private double componentOrgY;
-    /**
-     * Identificador del ultimo calculo en el que participo
-     */
-    private double lastCalculation;
+
 
 
     /**
@@ -104,21 +101,6 @@ public abstract class Component extends ImageView{
         return output;
     }
 
-    /**
-     * Se obtienen el ultimo numero de simulaciun en la que participo el componente
-     * @return Numero de la ultima simuacion en la que participo
-     */
-    public double getLastCalculation() {
-        return lastCalculation;
-    }
-
-    /**
-     * Se establece el ultimo numero de simulacion en la que participo el componente
-     * @param lastCalculation Numero de la ultima simuacion en la que participo
-     */
-    public void setLastCalculation(double lastCalculation) {
-        this.lastCalculation = lastCalculation;
-    }
 
     /**
      * Constructor del componente
@@ -143,7 +125,6 @@ public abstract class Component extends ImageView{
         this.type=type;
         nextid++;
         this.setMovementHandlers();
-        this.lastCalculation=0;
     }
 
     /**

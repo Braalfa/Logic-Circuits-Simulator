@@ -20,17 +20,12 @@ public class SuperTree {
      * Instancia del SuperTree
      */
     private static SuperTree instance;
-    /**
-     * Numero de ultimo calculo de salida
-     */
-    private double currentCalculation;
 
     /**
      * Constructot de la clase
      */
     private SuperTree() {
         outputComponents = new List<>();
-        currentCalculation=0;
     }
 
     /**
@@ -268,7 +263,6 @@ public class SuperTree {
      */
     public void calculateOutput() {
         NodoComponent nodo;
-        currentCalculation++;
         for (int i = 0; i < outputComponents.count(); i++) {
             nodo = outputComponents.get(i);
             this.calculateOutput(nodo);
@@ -282,22 +276,15 @@ public class SuperTree {
     private void calculateOutput(NodoComponent currentNode) {
         NodoComponent prev1= currentNode.getPrev1();
         NodoComponent prev2= currentNode.getPrev2();
-        Component component;
         if (prev1!= null) {
-            component=prev1.getComponent();
-            if (component.getLastCalculation()!=currentCalculation) {
-                calculateOutput(currentNode.getPrev1());
-                component.setLastCalculation(currentCalculation);
-                currentNode.getComponent().setInput1(currentNode.getPrev1().getComponent().getOutput());
-            }
+            calculateOutput(currentNode.getPrev1());
+            currentNode.getComponent().setInput1(currentNode.getPrev1().getComponent().getOutput());
+
         }
         if (prev2 != null) {
-            component=prev2.getComponent();
-            if (component.getLastCalculation()!=currentCalculation) {
-                component.setLastCalculation(currentCalculation);
-                calculateOutput(currentNode.getPrev2());
-                currentNode.getComponent().setInput2(currentNode.getPrev2().getComponent().getOutput());
-            }
+            calculateOutput(currentNode.getPrev2());
+            currentNode.getComponent().setInput2(currentNode.getPrev2().getComponent().getOutput());
+
         }
         currentNode.getComponent().calculate();
     }
