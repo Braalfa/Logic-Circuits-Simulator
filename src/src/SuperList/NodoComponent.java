@@ -10,11 +10,29 @@ import java.awt.*;
  * Nodo para la lista SuperTree
  */
 public class NodoComponent {
+    /**
+     * Lista de componentes siguientes
+     */
     private List<Component> next;
+    /**
+     * NodoComponent anterior 1
+     */
     private NodoComponent prev1;
+    /**
+     * NodoComponent anterior 2
+     */
     private NodoComponent prev2;
+    /**
+     * Coordenadas del InputTag2 en si mismo
+     */
     private Component component;
+    /**
+     * Cantidad de clonaciones
+     */
     private int clonationTimes;
+    /**
+     * Ultimo clon de si mismo
+     */
     private NodoComponent lastClone;
 
     /**

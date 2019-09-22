@@ -25,15 +25,45 @@ import Component.Component;
  * Esta clase es abstracta
  */
 public abstract class Tag extends Label {
-    protected Point nodCoords;
+    /**
+     *Coordenadas originales del Tag en el componente
+     */
+    private Point nodCoords;
+    /**
+     *Coordenadas actuales del Tag en el componente
+     */
     protected Point coords;
-    protected AnchorPane parent;
-    protected ArrayList<Line> lines;
+    /**
+     *AnchorPane en el cual se encuentra el Tag
+     */
+    private AnchorPane parent;
+    /**
+     *ArrayList de lineas del Tag
+     */
+    private ArrayList<Line> lines;
+    /**
+     *Componente padre del Tag
+     */
     protected Component component;
+    /**
+     *Posicion relativa en x del click antes de arrastrar
+     */
     private double relClickX;
+    /**
+     *Posicion relativa en y del click antes de arrastrar
+     */
     private double relClickY;
+    /**
+     * ArrayList de tags con los cuales se conecta
+     */
     protected ArrayList<Tag> nextTag;
+    /**
+     * SuperTree
+     */
     protected SuperTree superTree;
+    /**
+     * Color de las lineas
+     */
     private Color linesColor;
 
     /**

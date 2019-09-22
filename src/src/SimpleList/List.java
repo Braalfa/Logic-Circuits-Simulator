@@ -5,6 +5,9 @@ package SimpleList;
  * @param <T> El tipo de dato almacenado en la lista
  */
 public class List<T> {
+    /**
+     * Nodo inicial de la lista
+     */
     private Nodo first;
 
     /**

@@ -5,7 +5,13 @@ package SimpleList;
  * @param <T> Elemento contenido en la lista
  */
 public class Nodo<T> {
+    /**
+     * Nodo siguiente
+     */
     private Nodo next;
+    /**
+     * Elemento del nodo
+     */
     private T element;
 
     /**

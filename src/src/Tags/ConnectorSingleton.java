@@ -10,9 +10,21 @@ import Interfaz.*;
  * Esta clase implementa el patron de diseno Singleton en un Conector, el cual se encarga de conectar dos Tags mediante instancias de la clase Line
  */
 public class ConnectorSingleton {
+    /**
+     * Panel del circuito
+     */
     private AnchorPane parent;
+    /**
+     * Tag inicial de conexion
+     */
     private Tag startTag;
+    /**
+     * Tag final de conexion
+     */
     private Tag endTag;
+    /**
+     * Instancia de la clase
+     */
     private static ConnectorSingleton instance=null;
 
     /**

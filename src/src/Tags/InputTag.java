@@ -9,8 +9,17 @@ import java.util.ArrayList;
  * La clase InputTag representa los Tags que se encuentran en la parte anterior de los componentes
  */
 public class InputTag extends Tag {
+    /**
+     * Variable estatica para asignar el id
+     */
     private static int currentId=0;
+    /**
+     * Ids libres
+     */
     private static ArrayList<Integer> unusedIds = new ArrayList<>();
+    /**
+     * Numero de input en el componente padre
+     */
     private int inputNumber;
 
     /**

@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox minHeight="458.0" minWidth="711.0" prefHeight="458.0" prefWidth="711.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ControladorFXML">
+<VBox minHeight="458.0" minWidth="711.0" prefHeight="458.0" prefWidth="711.0" xmlns="http://javafx.com/javafx/8.0.221" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ControladorFXML">
   <children>
       <SplitPane dividerPositions="0.7288" minHeight="430.0" minWidth="711.0" prefHeight="458.0" prefWidth="711.0" style="-fx-background-color: #5C94FD;" VBox.vgrow="ALWAYS">
         <items>

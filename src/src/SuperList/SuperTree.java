@@ -12,8 +12,17 @@ import Tags.*;
  * Se hace uso del patron de diseno Singleton.
  */
 public class SuperTree {
+    /**
+     * Lista de NodoComponentes sin output conectado
+     */
     private List<NodoComponent> outputComponents;
+    /**
+     * Instancia del SuperTree
+     */
     private static SuperTree instance;
+    /**
+     * Numero de ultimo calculo de salida
+     */
     private double currentCalculation;
 
     /**

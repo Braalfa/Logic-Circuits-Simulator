@@ -24,12 +24,26 @@ import java.io.IOException;
  * Esta clase se encarga de contener los componentes personalizados, guardados por el usuario
  */
 public class SuperComponent extends Label {
+    /**
+     * Clone del SuperTree que contenia al super componente
+     */
     private SuperTree clone;
+    /**
+     * Elementos del super componente
+     */
     private ObservableList<Node> elements;
+    /**
+     * Imagen del super componente
+     */
     private Image image;
+    /**
+     * Rectangulo que con las dimensiones del super componente
+     */
     private Rectangle2D bounds;
 
-    private ObservableList<Node> elementsClone;
+    /**
+     * Ultimo clon del SuperTree que contiene al super componente
+     */
     private SuperTree cloneClone;
 
     /**
@@ -57,7 +71,6 @@ public class SuperComponent extends Label {
      */
     public void generate(AnchorPane parent, Point diplacement){
         this.cloneClone= clone.clone(parent, diplacement);
-        this.elementsClone=parent.getChildren();
         SuperTree.getInstance().addOutputNodes(this.getOutputs());
 
     }

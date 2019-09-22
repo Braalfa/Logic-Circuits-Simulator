@@ -20,34 +20,53 @@ import java.util.ArrayList;
 
 /**
  * Esta clase represanta el controlador del archivo de interfaz.fxml
- * Se encarga de controlar las acciones del usuario al nivel mas superior 
+ * Se encarga de controlar las acciones del usuario al nivel mas superior
  */
 public class ControladorFXML {
 
+    /**
+     *Panel de componentes
+     */
     @FXML
     private VBox componentsVbox;
+    /**
+     *Panel del circuito
+     */
     @FXML
     private AnchorPane circuitPane;
 
+    /**
+     *Boton de simular el circuito
+     */
     @FXML
     private Button simulateBtn;
+    /**
+     *Boton de guardar el circuito
+     */
     @FXML
     private Button saveBtn;
+    /**
+     *Boton de generar tabla de verdad
+     */
     @FXML
     private Button tableBtn;
-    @FXML
-    private ScrollPane scrollPane;
-
-    private ImageView componentSelected;
+    /**
+     *Lista de super componentes disponibles
+     */
     private ArrayList<SuperComponent> superComponents;
-
+    /**
+     *Lista de nombres ilegales para los super componentes
+     */
     private ArrayList<String> ilegalNames;
 
+    /**
+     *Coordenada relativa en x del Drag
+     */
     private double xOffSetDrag;
+    /**
+     *Coordenada relativa en y del Drag
+     */
     private double yOffSetDrag;
-
-    private double componentOrgX;
-    private double componentOrgY;
 
     /**
      * Constructor de la clase
@@ -94,6 +113,8 @@ public class ControladorFXML {
                     Interfaz.popUp("Error", "Debe digitarse un nombre adecuado");
                 }
             }
+        }else{
+            Interfaz.popUp("Error","Deben de haber componentes para guardar");
         }
     }
 
@@ -104,10 +125,15 @@ public class ControladorFXML {
      */
     private void handleTableButtonAction(ActionEvent event){
         ArrayList<InputTag> tags=SuperTree.getInstance().getFreeInputTags();
-        if(tags.size()>0){
+
+        if(tags.size()>0 && tags.size()<20){
             String[][] table=SuperTree.getInstance().getTrueTable();
             Interfaz.showTable(table,"Tabla de Verdad");
-        }else{}
+        }else if(tags.size()>=20){
+            Interfaz.popUp("Error","No se pueden procesar tantos valores de entrada");
+        }else{
+            Interfaz.popUp("Error","Deben de haber componentes para simular");
+        }
     }
     /**
      * Metodo para manejar las acciones del boton de simular
@@ -162,6 +188,8 @@ public class ControladorFXML {
                 }
                 Interfaz.showTable(results,"Resultado");
             }
+        }else{
+            Interfaz.popUp("Error","Deben de haber componentes para simular");
         }
     }
 

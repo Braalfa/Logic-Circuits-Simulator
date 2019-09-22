@@ -8,7 +8,13 @@ import java.util.ArrayList;
  * La clase OutputTag representa los Tags que se encuentran en la parte anterior de los componentes
  */
 public class OutputTag extends Tag {
+    /**
+     * Variable estatica para asignar el id
+     */
     private static int currentId=0;
+    /**
+     * Ids libres
+     */
     private static ArrayList<Integer> unusedIds = new ArrayList<>();
     /**
      * Constructor de la clase

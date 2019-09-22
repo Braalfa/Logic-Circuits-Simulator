@@ -18,20 +18,65 @@ import  java.awt.Point;
  * Esta clase es abstracta, debe se der implementada para definir el tipo de compuerta logica
  */
 public abstract class Component extends ImageView{
+    /**
+     * Tipo de componente
+     */
     private ComponentType type;
+    /**
+     * Cantidad de inputs
+     */
     private int inputs;
+    /**
+     * Coordenadas del OutputTag en si mismo
+     */
     private Point outputCoords;
+    /**
+     * Coordenadas del InputTag1 en si mismo
+     */
     private Point inputCoordsl;
+    /**
+     * Coordenadas del InputTag2 en si mismo
+     */
     private Point inputCoords2;
+    /**
+     * Valor estatico del siguiente id
+     */
     private static int nextid=0;
+    /**
+     * Valor de input 1
+     */
     protected boolean input1;
+    /**
+     * Valor de input 2
+     */
     protected boolean input2;
+    /**
+     * Valor de output
+     */
     protected boolean output;
+    /**
+     * Tag de output
+     */
     protected OutputTag outputTag;
+    /**
+     * Tag de input 1
+     */
     protected InputTag inputTag1;
+    /**
+     * Tag de input 2
+     */
     protected InputTag inputTag2;
+    /**
+     * Posicion original del componente en x antes de ser arrastrado
+     */
     private double componentOrgX;
+    /**
+     * Posicion original del componente en y antes de ser arrastrado
+     */
     private double componentOrgY;
+    /**
+     * Identificador del ultimo calculo en el que participo
+     */
     private double lastCalculation;
 
 
@@ -68,7 +113,7 @@ public abstract class Component extends ImageView{
     }
 
     /**
-     * Se establece el ultimo número de simulacion en la que participo el componente
+     * Se establece el ultimo numero de simulacion en la que participo el componente
      * @param lastCalculation Numero de la ultima simuacion en la que participo
      */
     public void setLastCalculation(double lastCalculation) {
