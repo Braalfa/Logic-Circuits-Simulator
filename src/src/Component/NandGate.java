@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class NandGate extends Component {
     /**
-     * Constructor de AndGate
+     * Constructor de NandGate
      */
     public NandGate() {
         super(2,  new Point(72,16), new Point(0,8), new Point(0,25), new Image("imgs/nand.png"), ComponentType.NAND);

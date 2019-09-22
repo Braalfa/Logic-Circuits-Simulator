@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class XorGate extends Component {
     /**
-     * Constructor de AndGate
+     * Constructor de XorGate
      */
     public XorGate() {
         super(2, new Point(61,16), new Point(0,9), new Point(0,23), new Image("imgs/xor.png"), ComponentType.XOR);

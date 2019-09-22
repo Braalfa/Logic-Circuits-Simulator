@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class XnorGate extends Component {
     /**
-     * Constructor de AndGate
+     * Constructor de XnorGate
      */
     public XnorGate() {
 

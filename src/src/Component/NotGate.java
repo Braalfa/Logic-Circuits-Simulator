@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class NotGate extends Component {
     /**
-     * Constructor de AndGate
+     * Constructor de NotGate
      */
     public NotGate() {
 

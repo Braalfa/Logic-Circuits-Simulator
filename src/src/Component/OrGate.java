@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class OrGate extends Component {
     /**
-     * Constructor de AndGate
+     * Constructor de OrGate
      */
     public OrGate() {
 

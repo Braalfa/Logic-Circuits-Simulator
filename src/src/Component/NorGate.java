@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class NorGate extends Component {
     /**
-     * Constructor de AndGate
+     * Constructor de NorGate
      */
     public NorGate() {
 
