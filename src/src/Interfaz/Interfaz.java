@@ -1,10 +1,13 @@
 package Interfaz;
 
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -13,12 +16,15 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import Tags.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Esta clase es la interfaz JavaFX del programa, se encarga de manejar la interaccion del programa con el usuario
@@ -95,19 +101,18 @@ public class Interfaz extends Application {
      * @param tags InpuTags libres en el circuito
      * @return Valores booleanos introducidos
      */
-    public static boolean[] getInputs(ArrayList<InputTag> tags){
-        Dialog<ArrayList<String>> dialog = new Dialog<>();
+    public static boolean[] getInputs(ArrayList<InputTag> tags) throws NoSuchElementException{
+        Dialog dialog = new Dialog<>();
         dialog.setTitle("Valores iniciales");
         dialog.setHeaderText("Ingrese los valores iniciales");
         ((Stage)dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image("imgs/icon1.png") );
-
-        // Set the button types.
-        ButtonType loginButtonType = new ButtonType("OK");
-        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+        ScrollPane scrollpane = new ScrollPane();
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(20, 10, 10, 10));
+        gridPane.setPadding(new Insets(20, 20, 10, 5));
 
         ArrayList<TextField> textFields=new ArrayList<>();
         ArrayList<Label> labels=new ArrayList<>();
@@ -121,9 +126,17 @@ public class Interfaz extends Application {
             gridPane.add(textField,1,i);
             textFields.add(textField);
         }
+        scrollpane.setContent(gridPane);
+        scrollpane.setPrefViewportHeight(200);
+        scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        dialog.getDialogPane().setContent(scrollpane);
 
-        dialog.getDialogPane().setContent(gridPane);
-        dialog.showAndWait();
+        Optional<ButtonType>result=dialog.showAndWait();
+
+        if (result.get()!=ButtonType.OK){
+            throw new NoSuchElementException();
+        }
+
         boolean[] results=new boolean[textFields.size()];
         for(int i=0;i<textFields.size();i++){
             String text=textFields.get(i).getText();
@@ -167,10 +180,26 @@ public class Interfaz extends Application {
             tableView.getColumns().add(column);
         }
 
+
         tableView.setItems(data);
-        tableView.setItems(data);
-        tableView.prefHeightProperty().bind(dialog.heightProperty());
-        tableView.prefWidthProperty().bind(dialog.widthProperty());
+        if(title.equals("Tabla de Verdad")){
+            tableView.prefHeightProperty().bind(dialog.heightProperty());
+            tableView.prefWidthProperty().bind(dialog.widthProperty());
+        }else{
+            tableView.prefHeightProperty().bind(Bindings.max(2, Bindings.size(tableView.getItems()))
+                    .multiply(40)
+                    .add(10)
+                    .add(0.01));
+
+            tableView.prefWidthProperty().bind(Bindings.max(2, Bindings.size(tableView.getItems()))
+                    .multiply(200)
+                    .add(10)
+                    .add(0.01));
+            tableView.maxHeightProperty().bind(dialog.heightProperty());
+            tableView.maxWidthProperty().bind(dialog.widthProperty());
+
+        }
+
         dialog.setResizable(true);
         dialog.setHeight(500);
         dialog.setWidth(400);

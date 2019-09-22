@@ -17,6 +17,7 @@ import Interfaz.*;
 import Tags.*;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 /**
  * Esta clase represanta el controlador del archivo de interfaz.fxml
@@ -145,49 +146,53 @@ public class ControladorFXML {
         SuperTree superTree = SuperTree.getInstance();
         ArrayList<InputTag> tags=superTree.getFreeInputTags();
         if(tags.size()>0) {
-            boolean[] values = Interfaz.getInputs(tags);
-            System.out.print(tags);
-            if (values == null) {
-                Interfaz.popUp("Error en la entrada", "Los valores ingresados no son correctos\n Ingrese solo 1 o 0");
-            } else {
-                for (int i = 0; i < tags.size(); i++) {
-                    InputTag tag = tags.get(i);
-                    if (tag.getInputNumber() == 1) {
-                        tag.getComponent().setInput1(values[i]);
-                    } else {
-                        tag.getComponent().setInput2(values[i]);
+            try {
+
+
+                boolean[] values = Interfaz.getInputs(tags);
+                System.out.print(tags);
+                if (values == null) {
+                    Interfaz.popUp("Error en la entrada", "Los valores ingresados no son correctos\n Ingrese solo 1 o 0");
+                } else {
+                    for (int i = 0; i < tags.size(); i++) {
+                        InputTag tag = tags.get(i);
+                        if (tag.getInputNumber() == 1) {
+                            tag.getComponent().setInput1(values[i]);
+                        } else {
+                            tag.getComponent().setInput2(values[i]);
+                        }
                     }
                 }
-            }
-            if(values!=null) {
-                superTree.calculateOutput();
-                List<Component> componentList = superTree.getOutComponents();
-                int outputsNumber =componentList.count();
+                if (values != null) {
+                    superTree.calculateOutput();
+                    List<Component> componentList = superTree.getOutComponents();
+                    int outputsNumber = componentList.count();
 
-                String[][] results= new String[2][tags.size()+outputsNumber];
+                    String[][] results = new String[2][tags.size() + outputsNumber];
 
-                for (int i = 0; i < tags.size(); i++) {
-                    InputTag tag=tags.get(i);
-                    String result="0";
-                    if(values[i]){
-                        result="1";
+                    for (int i = 0; i < tags.size(); i++) {
+                        InputTag tag = tags.get(i);
+                        String result = "0";
+                        if (values[i]) {
+                            result = "1";
+                        }
+                        results[0][i] = tag.getId();
+                        results[1][i] = result;
                     }
-                    results[0][i]=tag.getId();
-                    results[1][i]=result;
-                }
 
-                for (int i = tags.size(); i < tags.size()+outputsNumber; i++) {
-                    Component component = componentList.get(i-tags.size());
-                    String result="0";
-                    if(component.getOutput()){
-                        result="1";
+                    for (int i = tags.size(); i < tags.size() + outputsNumber; i++) {
+                        Component component = componentList.get(i - tags.size());
+                        String result = "0";
+                        if (component.getOutput()) {
+                            result = "1";
+                        }
+                        results[0][i] = component.getOutputTag().getId();
+                        results[1][i] = result;
+
                     }
-                    results[0][i]=component.getOutputTag().getId();
-                    results[1][i]=result;
-
+                    Interfaz.showTable(results, "Resultado");
                 }
-                Interfaz.showTable(results,"Resultado");
-            }
+            }catch (NoSuchElementException e){}
         }else{
             Interfaz.popUp("Error","Deben de haber componentes para simular");
         }
