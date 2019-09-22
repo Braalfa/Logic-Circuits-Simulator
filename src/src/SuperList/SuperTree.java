@@ -374,6 +374,12 @@ public class SuperTree {
 
     }
 
+    /**
+     * Metodo para generar un clon de toda la lista
+     * @param parent AnchorPane donde se quiere tener el clone
+     * @param diplacement Desplazamiento con respecto al cero para los elementos clones
+     * @return Clone de SuperTree
+     */
     public SuperTree clone(AnchorPane parent, Point diplacement){
         NodoComponent nodo;
         List<NodoComponent> clone=new List<>();
@@ -386,6 +392,10 @@ public class SuperTree {
         return superTreeClone;
     }
 
+    /**
+     * Calcula y devuelve la tabla de verdad del circuito
+     * @return Array bidimensional de la tabla de verdad del circuito
+     */
     public String[][] getTrueTable(){
         ArrayList<InputTag> inputs= this.getFreeInputTags();
         int inputsSize=inputs.size();
@@ -424,6 +434,11 @@ public class SuperTree {
         return finalTable;
     }
 
+    /**
+     * Calcula los outputs en cada uno de los casos de combinaciones de inputs presentes en la tabla
+     * @param table Array bidimensional de los booleanos de entrada
+     * @param inputs ArrayList de los InputTags
+     */
     public void fillTrueTable(boolean[][] table, ArrayList<InputTag> inputs){
         int inputsSize=inputs.size();
         int numOutputs= this.outputComponents.count();

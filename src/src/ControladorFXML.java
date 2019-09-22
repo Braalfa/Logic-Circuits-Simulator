@@ -18,6 +18,10 @@ import Tags.*;
 import java.awt.Point;
 import java.util.ArrayList;
 
+/**
+ * Esta clase represanta el controlador del archivo de interfaz.fxml
+ * Se encarga de controlar las acciones del usuario al nivel mas superior
+ */
 public class ControladorFXML {
 
     @FXML
@@ -45,10 +49,16 @@ public class ControladorFXML {
     private double componentOrgX;
     private double componentOrgY;
 
+    /**
+     * Constructor de la clase
+     */
     public ControladorFXML(){
 
     }
 
+    /**
+     * Metodo para inicializar los botones y el panel de componentes
+     */
     @FXML
     public void initialize(){
         ObservableList<Node> components=componentsVbox.getChildren();
@@ -64,22 +74,34 @@ public class ControladorFXML {
         setUpDrop();
     }
 
+    /**
+     * Metodo para manejar las acciones del boton de guardar
+     * Se guarda el component en pantalla como un SuperComponente
+     * @param event
+     */
     private void handleSaveButtonAction(ActionEvent event) {
         SimpleList.List<Component> components=SuperTree.getInstance().getOutComponents();
         if(components.count()>0) {
             String name = Interfaz.inputDialog("Nombre", "Ingrese el nombre del componente");
-            if (name != null && !ilegalNames.contains(name)) {
-                SuperComponent superComponent = this.createSuperComponent(name);
-                superComponents.add(superComponent);
-                componentsVbox.getChildren().add(superComponent);
-                VBox.setMargin(superComponent, new Insets(5, 0, 5, 0));
-                ilegalNames.add(name);
-            } else {
-                Interfaz.popUp("Error", "Debe digitarse un nombre adecuado");
+            if (name!=null) {
+                if(!name.equals("") && !ilegalNames.contains(name) ){
+                    SuperComponent superComponent = this.createSuperComponent(name);
+                    superComponents.add(superComponent);
+                    componentsVbox.getChildren().add(superComponent);
+                    VBox.setMargin(superComponent, new Insets(5, 0, 5, 0));
+                    ilegalNames.add(name);
+                }else{
+                    Interfaz.popUp("Error", "Debe digitarse un nombre adecuado");
+                }
             }
         }
     }
 
+    /**
+     * Metodo para manejar las acciones del boton de generar tabla
+     * Se calcula y muestra la tabla de verdad en pantalla
+     * @param event
+     */
     private void handleTableButtonAction(ActionEvent event){
         ArrayList<InputTag> tags=SuperTree.getInstance().getFreeInputTags();
         if(tags.size()>0){
@@ -87,7 +109,11 @@ public class ControladorFXML {
             Interfaz.showTable(table,"Tabla de Verdad");
         }else{}
     }
-
+    /**
+     * Metodo para manejar las acciones del boton de simular
+     * Se calculan los outputs y se muestran en pantalla
+     * @param event
+     */
     private void handleSimulateButtonAction(ActionEvent event)
     {
         SuperTree superTree = SuperTree.getInstance();
@@ -138,28 +164,16 @@ public class ControladorFXML {
             }
         }
     }
-    public void handleClickComponents(ImageView source) {
-        source.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent event) {
-                if(source.getOpacity()==1.0){
-                    source.setOpacity(0.6) ;
-                    componentSelected= source;
-                }else{
-                    source.setOpacity(1) ;
-                    componentSelected= null;
-                }
-                event.consume();
-            }
-        });
-    }
-    public void setUpDrag(Node source){
+
+    /**
+     * Metodo para establecer el drag en cada uno de los componentes
+     * @param source Nodo al cual se le establece el drag
+     */
+    private void setUpDrag(Node source){
         source.setOnDragDetected(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
-                /* drag was detected, start a drag-and-drop gesture*/
-                /* allow any transfer mode */
                 Dragboard db = source.startDragAndDrop(TransferMode.COPY);
 
-                /* Put a string on a dragboard */
                 ClipboardContent content = new ClipboardContent();
                 if(source instanceof ImageView) {
                     content.putString("<C>"+source.getId());
@@ -184,8 +198,6 @@ public class ControladorFXML {
 
         source.setOnDragDone(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
-                /* the drag and drop gesture ended */
-                /* if the data was successfully moved, clear it */
                 if (event.getTransferMode() == TransferMode.MOVE) {
                 }
                 event.consume();
@@ -193,15 +205,14 @@ public class ControladorFXML {
         });
     }
 
-    public void setUpDrop() {
+    /**
+     * Metodo para establecer el drop en el circuitPane
+     */
+    private void setUpDrop() {
         circuitPane.setOnDragOver(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
-                /* data is dragged over the target */
-                /* accept it only if it is not dragged from the same node
-                 * and if it has a string data */
                 if (event.getGestureSource() != circuitPane &&
                         event.getDragboard().hasString()) {
-                    /* allow for both copying and moving, whatever user chooses */
                     event.acceptTransferModes(TransferMode.COPY);
                 }
 
@@ -211,8 +222,6 @@ public class ControladorFXML {
 
         circuitPane.setOnDragEntered(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
-                /* the drag-and-drop gesture entered the target */
-                /* show to the user that it is an actual gesture target */
                 if (event.getGestureSource() != circuitPane &&
                         event.getDragboard().hasString()) {
                 }
@@ -223,16 +232,12 @@ public class ControladorFXML {
 
         circuitPane.setOnDragExited(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
-                /* mouse moved away, remove the graphical cues */
-
                 event.consume();
             }
         });
 
         circuitPane.setOnDragDropped(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
-                /* data dropped */
-                /* if there is a string data on dragboard, read it and use it */
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasString()) {
@@ -256,8 +261,6 @@ public class ControladorFXML {
                         success=true;
                     }
                 }
-                /* let the source know whether the string was successfully
-                 * transferred and used */
                 event.setDropCompleted(success);
 
                 event.consume();
@@ -266,7 +269,12 @@ public class ControladorFXML {
 
     }
 
-    public SuperComponent getSuperComponent(String name){
+   /**
+     * Busca el super componente en la lista de super componentes
+     * @param name Nombre del super componente
+     * @return SuperComponent encontrado
+     */
+    private SuperComponent getSuperComponent(String name){
         for(SuperComponent superComponent:superComponents){
             if(superComponent.getText().equals(name)){
                 return superComponent;
@@ -275,14 +283,23 @@ public class ControladorFXML {
         return null;
     }
 
-
-    public SuperComponent createSuperComponent(String name){
+    /**
+     * Crea y devuelve un super componente basado en el circuito en el circuitPane
+     * @param name Nombre del super componente
+     * @return SuperComponent generado
+     */
+    private SuperComponent createSuperComponent(String name){
         SuperComponent superComponent= new SuperComponent(name, circuitPane);
         this.setUpDrag(superComponent);
         return superComponent;
     }
 
-    public void addSuperComponent(SuperComponent superComponent, Point cliqCoords){
+    /**
+     * Agrega un super componente al circuitPane
+     * @param superComponent Super componente que se desea agregar
+     * @param cliqCoords Coordenadas donde se hizo el drop en el circuitPane
+     */
+    private void addSuperComponent(SuperComponent superComponent, Point cliqCoords){
         int centerX = (int)superComponent.getBounds().getWidth()/2;
         int centerY = (int)superComponent.getBounds().getHeight()/2;
 

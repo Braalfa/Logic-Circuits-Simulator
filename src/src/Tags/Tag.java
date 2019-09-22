@@ -18,7 +18,12 @@ import java.awt.Point;
 import java.util.Random;
 import java.awt.Color;
 import Component.Component;
-import SuperList.*;
+
+/**
+ * La clase Tag representa Labels en los componentes, disenados para conectarse entre si y generar lineas, ademas de indicarle al resto
+ * del programa que se conectaron.
+ * Esta clase es abstracta
+ */
 public abstract class Tag extends Label {
     protected Point nodCoords;
     protected Point coords;
@@ -31,8 +36,18 @@ public abstract class Tag extends Label {
     protected SuperTree superTree;
     private Color linesColor;
 
+    /**
+     * Agrega un Tag a la lista de Tags siguientes
+     * @param nextTag Tag al que se conecta
+     */
     abstract protected void addNextTag(Tag nextTag);
 
+    /**
+     * Consrtructor
+     * @param parent AnchorPane que contiene al tag
+     * @param nodCoords Coordenadas del tag relativas a su componente padre
+     * @param component Componente padre
+     */
     public Tag(AnchorPane parent, Point nodCoords, Component component){
         this.coords=new Point((int)nodCoords.getX(),(int)nodCoords.getY());
         this.nodCoords=nodCoords;
@@ -47,6 +62,10 @@ public abstract class Tag extends Label {
         this.linesColor=new Color(random.nextFloat(),random.nextFloat(),random.nextFloat());
     }
 
+    /**
+     * Le da formato al tag
+     * @param text Texto que tendra el tag
+     */
     protected void display(String text){
         this.setText(text);
         this.setFont(new Font("Facade",10));
@@ -56,9 +75,16 @@ public abstract class Tag extends Label {
         parent.layout();
     }
 
+    /**
+     * Se establecen los listeners de movimiento para el tag
+     */
     private void setMovementListener(){
         this.setOnMousePressed(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
+                /*
+                    Si se presiona con el mouse izquierdo se prepara para arrastrar
+                    Si se presiona con el mouse derecho el tag vuelve a su posicion inicial
+                 */
                 Tag source = (Tag) event.getSource();
                 if(event.getButton()==MouseButton.PRIMARY) {
                     ScrollPane scrollpane = (ScrollPane) component.getScene().lookup("#scrollPane");
@@ -91,6 +117,9 @@ public abstract class Tag extends Label {
         });
         this.setOnMouseDragged( new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
+                /*
+                Se actualiza la posicion del tag al arrastrarlo
+                 */
                 Tag source= (Tag)event.getSource();
                 ScrollPane scrollpane = (ScrollPane) component.getScene().lookup("#scrollPane");
                 source.setLayoutX(event.getSceneX()+scrollpane.getHvalue()*(parent.getWidth()-scrollpane.getViewportBounds().getWidth())-relClickX);
@@ -125,6 +154,9 @@ public abstract class Tag extends Label {
         this.setOnMouseReleased(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
+                    /*
+                    Si el click es con el boton izquierdo se mueve el tag
+                     */
                     Tag source = (Tag) event.getSource();
                     Tag overlap;
                     Line thisLine = lines.get(lines.size() - 1);
@@ -187,6 +219,10 @@ public abstract class Tag extends Label {
         });
     }
 
+    /**
+     * Actualiza la posicion del tag luego de que se arrastrara
+     * @param thisLine Linea creada en el arrastre
+     */
     public void uptadeDisplacedTag(Line thisLine){
         if (thisLine.getStartX() > thisLine.getEndX()) {
             this.setLayoutX(thisLine.getEndX() - this.getWidth());
@@ -204,11 +240,17 @@ public abstract class Tag extends Label {
 
     }
 
+    /**
+     * Devuelve el tag a su posicion original
+     */
     public void goBackHome() {
         this.setLayoutX(coords.getX() + component.getX());
         this.setLayoutY(coords.getY() + component.getY());
     }
 
+    /**
+     * Desconecta el tag por completo y lo devuelve a su posicion original
+     */
     public void disconect(){
         this.clearAllNeighboors();
         this.clearLines();
@@ -217,21 +259,10 @@ public abstract class Tag extends Label {
         this.setLayoutY(coords.getY() + component.getY());
     }
 
-
-    private boolean overlaps(Line line, Tag start, Tag end){
-        boolean result=false;
-        Bounds startBn = start.getComponent().getLayoutBounds();
-        Bounds endBn = end.getComponent().getLayoutBounds();
-
-        if( line.intersects(startBn.getMinX()+1,startBn.getMinY(),startBn.getMaxX()-startBn.getMinX()-2, startBn.getMaxY()-startBn.getMinY())  ||
-            line.intersects(endBn.getMinX()+1,endBn.getMinY(),endBn.getMaxX()-endBn.getMinX()-2, endBn.getMaxY()-endBn.getMinY())){
-                result=true;
-
-        }
-        return result;
-
-    }
-
+    /**
+     * Averigua si hay un tag en overlap con si mismo y lo retorna
+     * @return Tag en overlap con si mismo
+     */
     public Tag getOverlap(){
         ObservableList<Node> nodos=parent.getChildren();
         Tag overlap=null;
@@ -246,20 +277,35 @@ public abstract class Tag extends Label {
         return overlap;
     }
 
+    /**
+     * Retorna las coordenadas originales del tag en el padre
+     * @return Las coordenadas originales del tag en el padre
+     */
     private Point getNodCords(){
         return this.nodCoords;
     }
 
+    /**
+     * Retorna el componente padre del tag
+     * @return Componente padre del tag
+     */
     public Component getComponent(){
         return this.component;
     }
 
+    /**
+     * Elimina la ultima linea creada
+     */
     public void removeLastLine(){
         Line line= lines.get(lines.size()-1);
         parent.getChildren().remove(line);
         lines.remove(line);
     }
 
+    /**
+     * Retorna el punto de inicio de la ultima linea creada
+     * @return Punto de inicio de ultima linea creada
+     */
     public Point getLastLineStartPoint(){
         if(this.lines.isEmpty() ){
             return new Point((int)(nodCoords.getX()+component.getX()),(int)(nodCoords.getY()+component.getY()));
@@ -270,6 +316,11 @@ public abstract class Tag extends Label {
             return new Point((int)lastLine.getEndX(),(int)lastLine.getEndY());
         }
     }
+
+    /**
+     * Retorna el punto final de la ultima linea creada
+     * @return Punto final de ultima linea creada
+     */
     public Point getLastLineEndPoint(){
         if(this.lines.isEmpty() || this.hasNextTag()){
             return new Point((int)(nodCoords.getX()+component.getX()),(int)(nodCoords.getY()+component.getY()));
@@ -279,6 +330,10 @@ public abstract class Tag extends Label {
         }
     }
 
+    /**
+     * Retorna un booleano que indica si el tag esta conectado
+     * @return Booleano que indica si esta conectado
+     */
     public boolean hasNextTag(){
         if (!this.nextTag.isEmpty()){
             return true;
@@ -287,14 +342,25 @@ public abstract class Tag extends Label {
         }
     }
 
+    /**
+     * Retorna las lineas
+     * @return Las lineas del tag
+     */
     public ArrayList<Line> getLines() {
         return lines;
     }
 
+    /**
+     * Retorna la lista de tags conectados
+     * @return Lista de tags conectados
+     */
     public ArrayList<Tag> getNextTag() {
         return nextTag;
     }
 
+    /**
+     * Hace que todos los vecinos vallan a su casa (todos los tags conectados a simismo vuelvan a su punto de origen)
+     */
     public void clearAllNeighboors(){
         if(this.hasNextTag()){
             for (Tag tag : nextTag) {
@@ -312,6 +378,9 @@ public abstract class Tag extends Label {
         this.setVisible(true);
     }
 
+    /**
+     * Elimina todas las lineas
+     */
     public void clearLines(){
         for(Line line:this.lines){
             parent.getChildren().remove(line);
@@ -319,6 +388,11 @@ public abstract class Tag extends Label {
         lines=new ArrayList<>();
     }
 
+    /**
+     * Averigua si una linea choca con algun elemento en el AnchorPane
+     * @param line linea para averiguar si hay choque
+     * @return Booleano que indica si hay choque
+     */
     private boolean overlapsComponents(Line line){
         ObservableList<Node> nodes=parent.getChildren();
         Bounds bounds;
@@ -338,11 +412,18 @@ public abstract class Tag extends Label {
         return result;
     }
 
+    /**
+     * Metodo para destruir el tag
+     */
     public void destroy(){
         this.disconect();
         parent.getChildren().remove(this);
     }
 
+    /**
+     * Actualiza el color en todas las lineas
+     * @param color Color para actualizar las lineas
+     */
     public void setLinesColor(Color color){
         int r=color.getRed();
         int g=color.getGreen();
@@ -352,15 +433,31 @@ public abstract class Tag extends Label {
         }
     }
 
+    /**
+     * Metodo para cambiar el color de una linea
+     * @param line Linea a la cual se le desea cambiar el color
+     * @param r Nivel de rojo
+     * @param g Nivel de verde
+     * @param b Nivel del azul
+     */
     private void setLineColor(Line line, int r, int g, int b){
         line.setStyle("-fx-stroke:  rgb(" + r + "," + g + ", " + b + ");");
     }
 
+    /**
+     * Metodo para agregar una linea al tag
+     * @param line Linea que se desea agregar
+     */
     public void addLine(Line line){
         line.setVisible(true);
         this.getLines().add(line);
         this.setLineColor(line);
     }
+
+    /**
+     * Metodo para cambiar el color de una linea, de acuerdo al color intrinsico del tag
+     * @param line Linea a la cual se le desea cambiar el color
+     */
     private void setLineColor(Line line){
         int r=this.getLinesColor().getRed();
         int g=this.getLinesColor().getGreen();
@@ -368,14 +465,27 @@ public abstract class Tag extends Label {
         line.setStyle("-fx-stroke:  rgb(" + r + "," + g + ", " + b + ");");
     }
 
+    /**
+     * Retorna el color intrinsico de las lineas
+     * @return Color intrinsico de las lineas
+     */
     public Color getLinesColor(){
         return this.linesColor;
     }
 
-    public void resetLines() {
+    /**
+     * Reinicia el array de lineas
+     */
+    private void resetLines() {
         this.lines = new ArrayList<>();
     }
 
+    /**
+     * Clona todas las lineas
+     * @param diplacement Desplazamiento en el AnchorPane de las lineas cloes
+     * @param parent AnchorPane en el cual estaran las lineas clones
+     * @return ArrayList de las lineas clonadas
+     */
     public ArrayList<Line> cloneLines(Point diplacement, AnchorPane parent){
         Line copyLine;
         ArrayList<Line> linesCopy=new ArrayList<>();
@@ -386,27 +496,12 @@ public abstract class Tag extends Label {
         }
         return linesCopy;
     }
-
-    public Point getCoords() {
-        return coords;
-    }
-
-    public void setCoords(Point coords) {
-        this.coords = coords;
-    }
-
-    public void setNextTag(ArrayList<Tag> nextTag) {
-        this.nextTag = nextTag;
-    }
-
+    /**
+     * Establce el ArrayList de lineas
+     * @param lines Nuevo ArrayList de lineas
+     */
     public void setLines(ArrayList<Line> lines){
         this.lines=lines;
     }
 
-    public void addToPane(AnchorPane pane){
-        pane.getChildren().add(this);
-        for(Line line:lines){
-            pane.getChildren().add(this);
-        }
-    }
 }

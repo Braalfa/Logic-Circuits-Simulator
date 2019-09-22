@@ -1,27 +1,38 @@
 package Tags;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
 import java.awt.*;
-import java.util.ArrayList;
-import Component.Component;
 import Interfaz.*;
+
+/**
+ * Esta clase implementa el patron de diseno Singleton en un Conector, el cual se encarga de conectar dos Tags mediante instancias de la clase Line
+ */
 public class ConnectorSingleton {
     private AnchorPane parent;
     private Tag startTag;
     private Tag endTag;
-    private ArrayList<Bounds> bounds;
     private static ConnectorSingleton instance=null;
 
+    /**
+     * Constructor de la clase
+     * @param parent AnchorPane en el cual se encuentran los Tags
+     * @param startTag Tag de inicio
+     * @param endTag Tag final
+     */
     private ConnectorSingleton(AnchorPane parent, Tag startTag, Tag endTag){
         this.parent=parent;
         this.startTag=startTag;
         this.endTag=endTag;
     }
 
+    /**
+     * Retorna la instancia del conector
+     * @param startTag Tag de inicio
+     * @param endTag Tag final
+     * @return Instancia del conector
+     */
     public static ConnectorSingleton getInstance(Tag startTag, Tag endTag){
         if(instance==null){
             instance= new ConnectorSingleton((AnchorPane) startTag.getParent(),startTag, endTag);
@@ -32,29 +43,25 @@ public class ConnectorSingleton {
         return instance;
     }
 
-    private void updateBounds(){
-        ObservableList<Node> nodes=parent.getChildren();
-        ArrayList<Bounds> bounds= new ArrayList<>();
-        for(Node node: nodes){
-            if ((node instanceof Component) && node!= startTag.getComponent() && node!=endTag.getComponent()){
-                bounds.add(node.getLayoutBounds());
-            }
-        }
-        this.bounds=bounds;
 
-    }
+    /**
+     * Metodo para conectar los tags
+     * @return Booleano que indica si la conexion fue exitosa
+     */
     public boolean autoConnect() {
         Tag start= startTag;
         Tag end= endTag;
         Point startPoint = start.getLastLineStartPoint();
         Point endPoint = end.getLastLineEndPoint();
+
         start.removeLastLine();
         Line[] lines = null;
+
         int linesIndex = 1;
-        this.updateBounds();
         long timeStart=java.lang.System.currentTimeMillis();
         long currentTime=timeStart;
         boolean outOfTime=false;
+
         while (lines == null && !outOfTime) {
             lines = this.createPath(linesIndex, linesIndex, (int) startPoint.getX() ,
                     (int) startPoint.getY() , (int) endPoint.getX() , (int) endPoint.getY() , 1, start, end);
@@ -62,13 +69,16 @@ public class ConnectorSingleton {
                 lines = this.createPath(linesIndex, linesIndex, (int) startPoint.getX() ,
                         (int) startPoint.getY() , (int) endPoint.getX() , (int) endPoint.getY() , -1, start, end);
             }
+
             linesIndex++;
             System.out.print(linesIndex+"\n");
             currentTime=java.lang.System.currentTimeMillis();
+
             if(currentTime-timeStart>1000){
                 outOfTime=true;
             }
         }
+
         if (outOfTime){
             try{
                 for (Line line : lines) {
@@ -91,7 +101,21 @@ public class ConnectorSingleton {
             return true;
         }
     }
-    public Line[] createPath(int numberlines, int orgLines, int ax, int ay, int bx, int by, int direction, Tag start, Tag end ) {
+
+    /**
+     * Metodo auxiliar para conectar los tags
+     * @param numberlines Numero que quedan por crear
+     * @param orgLines Numero total de lineas que se desea crear
+     * @param ax Posicion del Tag inicial en X
+     * @param ay Posicion del Tag inicial en Y
+     * @param bx Posicion del Tag final en X
+     * @param by Posicion del Tag final en Y
+     * @param direction Direccion de la linea
+     * @param start Tag de inicio
+     * @param end Tag final
+     * @return
+     */
+    private Line[] createPath(int numberlines, int orgLines, int ax, int ay, int bx, int by, int direction, Tag start, Tag end ) {
         int lim1 = (int)parent.getHeight();
         int lim2 = 0;
         int lim3 = (int)parent.getWidth();
@@ -173,6 +197,15 @@ public class ConnectorSingleton {
             return lines;
         }
     }
+
+    /**
+     * Metodo para crear una linea
+     * @param ax Posicion en X inicial
+     * @param ay Posicion en Y inicial
+     * @param bx Posicion en X final
+     * @param by Posicion en Y final
+     * @return Linea creada
+     */
     private Line createLine(double ax, double ay, double bx, double by){
         Line line = new Line();
         line.setStartX(ax);
@@ -182,6 +215,14 @@ public class ConnectorSingleton {
         parent.getChildren().add(line);
         return line;
     }
+
+    /**
+     * Metodo para averiguar si una linea se sobrepone a los componentes de los Tags Iniciales y Finales
+     * @param line Linea para analizar
+     * @param start Tag de inicio
+     * @param end Tag final
+     * @return Booleano que indica si hay overlap
+     */
     private boolean overlaps(Line line, Tag start,Tag end){
         boolean result=false;
         Bounds startBn = start.getComponent().getLayoutBounds();
