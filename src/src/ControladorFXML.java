@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 /**
  * Esta clase represanta el controlador del archivo de interfaz.fxml
- * Se encarga de controlar las acciones del usuario al nivel mas superior
+ * Se encarga de controlar las acciones del usuario al nivel mas superior 
  */
 public class ControladorFXML {
 
