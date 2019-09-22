@@ -1,6 +1,13 @@
 package Component;
-
+/**
+ * Esta clase se encarga de implementar el patron de diseño Factory para crear Componentes
+ */
 public class Component_Factory {
+    /**
+     * Metodo estatico que crea componentes
+     * @param c Tipo de componente
+     * @return Componente generado
+     */
     public static Component getComponent(ComponentType c){
         switch (c){
             case NOR:

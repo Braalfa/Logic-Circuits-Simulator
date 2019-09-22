@@ -6,16 +6,28 @@ import Component.Component;
 import java.awt.*;
 import java.util.ArrayList;
 import Tags.*;
+
+/**
+ * Clase que implementa una variacion de la lista enlazada para representar las conexiones de un circuito logico.
+ * Se hace uso del patron de diseno Singleton.
+ */
 public class SuperTree {
     private List<NodoComponent> outputComponents;
     private static SuperTree instance;
     private double currentCalculation;
 
-    public SuperTree() {
+    /**
+     * Constructot de la clase
+     */
+    private SuperTree() {
         outputComponents = new List<>();
         currentCalculation=0;
     }
 
+    /**
+     * Retorna la instancia de la clase
+     * @return Instancia de la clase
+     */
     public static SuperTree getInstance() {
         if (instance == null) {
             instance = new SuperTree();
@@ -24,14 +36,26 @@ public class SuperTree {
         return instance;
     }
 
+    /**
+     * Retorna la lista de NodoComponent que no tienen salida
+     * @return outputComponents
+     */
     public List<NodoComponent> getOutputComponents() {
         return outputComponents;
     }
 
+    /**
+     * Agrega una lista de NodoComponent a la lista outputComponent
+     * @param nodoComponentList Lista de NodoComponent a agregar
+     */
     public void addOutputNodes(List<NodoComponent> nodoComponentList) {
         outputComponents.addAll(nodoComponentList);
     }
 
+    /**
+     * Retorna una lista de los componentes que no tienen salida
+     * @return Lista de componentes sin salida
+     */
     public List<Component> getOutComponents() {
         List<Component> componentList = new List<>();
         for (int i = 0; i < outputComponents.count(); i++) {
@@ -40,23 +64,38 @@ public class SuperTree {
         return componentList;
     }
 
+    /**
+     * Agrega el componente al final de la lista de NodoComponentes sin salida
+     * @param component Componente a agregar
+     */
     public void add(Component component) {
         outputComponents.addEnd(new NodoComponent(component));
     }
 
-    public void setFreeOutput(NodoComponent nodo) {
+    /**
+     * Agrega un NodoComponent al final de la lista de outputComponents
+     * @param nodo NodoComponent a agregar
+     */
+    private void setFreeOutput(NodoComponent nodo) {
         if (!this.isOnOutputList(nodo)) {
             outputComponents.addEnd(nodo);
         }
     }
 
-
-    public void remove(NodoComponent nodo) {
+    /**
+     * Remueve un NodoComponent del SuperTree
+     * @param nodo  NodoComponent a remover
+     */
+    private void remove(NodoComponent nodo) {
         this.disconnectFromChildren(nodo);
         this.disconnectFromParents(nodo);
         this.outputComponents.delete(nodo);
     }
 
+    /**
+     * Remueve un componente del SuperTree
+     * @param component Componente a eliminar
+     */
     public void remove(Component component) {
         NodoComponent nodo = this.getNode(component);
         this.disconnectFromChildren(nodo);
@@ -64,12 +103,20 @@ public class SuperTree {
         this.outputComponents.delete(nodo);
     }
 
+    /**
+     * Desconecta un componente del SuperTree y lo agrega como componente libre
+     * @param component Componente a desconectar
+     */
     public void disconnect(Component component) {
         NodoComponent nodo = this.getNode(component);
         this.remove(nodo);
         this.setFreeOutput(nodo);
     }
 
+    /**
+     * Desconecta un NodoComponent de sus hijos
+     * @param nodo NodoComponent a desconectar
+     */
     private void disconnectFromChildren(NodoComponent nodo) {
         if (nodo != null) {
             if (nodo.getPrev1() != null) {
@@ -92,6 +139,12 @@ public class SuperTree {
         nodo.setPrev2(null);
     }
 
+    /**
+     * Conecta dos componentes
+     * @param parent Componente padre
+     * @param child Componente hijo
+     * @param inputNumber Numero de entrada que se usara
+     */
     public void connect(Component parent, Component child, int inputNumber) {
         NodoComponent nodoParent = this.getNode(parent);
         NodoComponent nodoChild = this.getNode(child);
@@ -108,10 +161,18 @@ public class SuperTree {
 
     }
 
+    /**
+     * Remueveun NodoComponent de la outputList
+     * @param nodo NodoComponent a eliminar
+     */
     public void removeFromOutputList(NodoComponent nodo) {
         outputComponents.delete(nodo);
     }
 
+    /**
+     * Desconecta un NodoComponent de sus padres
+     * @param nodo NodoComponent a desconectar
+     */
     public void disconnectFromParents(NodoComponent nodo) {
         List<Component> subList = nodo.getNext();
         int index = 0;
@@ -132,7 +193,11 @@ public class SuperTree {
         nodo.setNext(new List<>());
     }
 
-
+    /**
+     * Retorna un booleano que indica si el NodoComponent esta en la outputList
+     * @para  nodo NodoComponent a buscar en la lista
+     * @return Booleano que indica si se encuentra en la lista
+     */
     private boolean isOnOutputList(NodoComponent nodo) {
         int index = 0;
         int limit = outputComponents.count();
@@ -149,7 +214,12 @@ public class SuperTree {
         return false;
     }
 
-    public NodoComponent getNode(Component component) {
+    /**
+     * Retorna el NodoComponent en donde se encuentra el componente
+     * @param component Componente a buscar
+     * @return NodoComponent buscado
+     */
+    private NodoComponent getNode(Component component) {
         NodoComponent nodo;
         NodoComponent result = null;
         for (int i = 0; i < outputComponents.count(); i++) {
@@ -163,6 +233,12 @@ public class SuperTree {
 
     }
 
+    /**
+     * Metodo auxiliar de getNode(Component component)
+     * @param component Componente a buscar
+     * @param currentNode Nodo en el cual se esta buscando
+     * @return Nodo en el cual se encuentra el componente
+     */
     private NodoComponent getNode(Component component, NodoComponent currentNode) {
         NodoComponent nodo = null;
         if (currentNode.getComponent() == component) {
@@ -178,6 +254,9 @@ public class SuperTree {
         return nodo;
     }
 
+    /**
+     * Metodo que calcula el output en cada uno de los componentes de la SuperList
+     */
     public void calculateOutput() {
         NodoComponent nodo;
         currentCalculation++;
@@ -187,6 +266,10 @@ public class SuperTree {
         }
     }
 
+    /**
+     * Metodo auxiliar de calculateOutput()
+     * @param currentNode Nodo en el cual se encuentra calculando outputs
+     */
     private void calculateOutput(NodoComponent currentNode) {
         NodoComponent prev1= currentNode.getPrev1();
         NodoComponent prev2= currentNode.getPrev2();
@@ -210,6 +293,10 @@ public class SuperTree {
         currentNode.getComponent().calculate();
     }
 
+    /**
+     * Retorna los InputTags libres
+     * @return ArrayList de InputTags libres
+     */
     public ArrayList<InputTag> getFreeInputTags() {
         NodoComponent nodo;
         ArrayList<InputTag> tags = new ArrayList<>();
@@ -220,6 +307,11 @@ public class SuperTree {
         return tags;
     }
 
+    /**
+     * Metodo auciliar de getFreeInputTags()
+     * @param currentNode Nodo en el cual se encuentra buscando actualmente
+     * @param tags Arraylist de tags encontrados
+     */
     private void getFreeInputTags(NodoComponent currentNode, ArrayList<InputTag> tags) {
         if (currentNode.getPrev1() != null) {
             getFreeInputTags(currentNode.getPrev1(), tags);
@@ -239,16 +331,32 @@ public class SuperTree {
         }
     }
 
+    /**
+     * Metodo para establecer la lista outputComponents
+     * @param outputComponents Nueva lista de outputComponents
+     */
     private void setOutputComponents(List<NodoComponent> outputComponents) {
         this.outputComponents = outputComponents;
     }
 
+    /**
+     * Metodo que indica si abra retroalimaentacion al conectar prevComp con nextComp
+     * @param nextComp Componente a conectar adelante
+     * @param prevComp Componente a conectar atras
+     * @return Booleano que indica posible retroalimentacion
+     */
     public boolean willFeedback(Component nextComp, Component prevComp){
         NodoComponent first= this.getNode(prevComp);
         NodoComponent match = this.getNode(nextComp);
         return this.willFeedback(match,first);
     }
 
+    /**
+     * Metodo auxiliar de willFeedback
+     * @param match Nodo a analizar retroalimentacion
+     * @param currentNode Nodo con el que se esta analizando
+     * @return Booleano que indica posible retroalimentacion
+     */
     private boolean willFeedback(NodoComponent match, NodoComponent currentNode){
         boolean result=false;
         if (currentNode.getPrev1() == match|| currentNode.getPrev2()==match) {

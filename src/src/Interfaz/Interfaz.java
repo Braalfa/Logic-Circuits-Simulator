@@ -20,12 +20,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Esta clase es la interfaz JavaFX del programa, se encarga de manejar la interaccion del programa con el usuario
+ */
 public class Interfaz extends Application {
-
+    /**
+     * Metodo principal del programa
+     * @param args
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Metodo start de la aplicacion
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("interfaz.fxml"));
@@ -39,6 +48,11 @@ public class Interfaz extends Application {
 
     }
 
+    /**
+     * Muestra una ventana de mensaje
+     * @param title Titulo de la ventana
+     * @param message Mensaje
+     */
     public static void popUp(String title, String message)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -52,6 +66,13 @@ public class Interfaz extends Application {
         alert.showAndWait();
 
     }
+
+    /**
+     * Muestra una ventana de entrada
+     * @param title Titulo de la ventana
+     * @param message Mensaje
+     * @return Valor introducido por el usuario
+     */
     public static String inputDialog(String title, String message)
     {
 
@@ -68,6 +89,12 @@ public class Interfaz extends Application {
             return null;
         }
     }
+
+    /**
+     * Metodo para mostrar una ventana que le pide al usuario las entradas del circuito
+     * @param tags InpuTags libres en el circuito
+     * @return Valores booleanos introducidos
+     */
     public static boolean[] getInputs(ArrayList<InputTag> tags){
         Dialog<ArrayList<String>> dialog = new Dialog<>();
         dialog.setTitle("Valores iniciales");
@@ -110,12 +137,17 @@ public class Interfaz extends Application {
         }
         return results;
     }
+
+    /**
+     * Metodo que muestra una tabla de verdad
+     * @param table Array bidimensional de tabla de verdad
+     * @param title Titulo de la ventana
+     */
     public static void showTable(String[][] table, String title){
         Dialog<TableView<String>> dialog = new Dialog<>();
         dialog.setTitle(title);
         ((Stage)dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image("imgs/icon2.png") );
 
-        // Set the button types.
         ButtonType loginButtonType = new ButtonType("OK");
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType);
 

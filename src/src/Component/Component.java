@@ -12,6 +12,11 @@ import javafx.scene.layout.AnchorPane;
 import SuperList.*;
 import  java.awt.Point;
 
+/**
+ * La presente clase representa una compuerta logica, la cual es representada por su imagen, y tiene una funcion
+ * de calculcular su valor de output basado en sus inputs.
+ * Esta clase es abstracta, debe se der implementada para definir el tipo de compuerta logica
+ */
 public abstract class Component extends ImageView{
     private ComponentType type;
     private int inputs;
@@ -30,39 +35,56 @@ public abstract class Component extends ImageView{
     private double lastCalculation;
 
 
-    public boolean getInput1() {
-        return input1;
-    }
-
+    /**
+     * Se establece el valor de la entrada 1 del componente
+     * @param input1 Valor booleano que tomará la entrada 1
+     */
     public void setInput1(boolean input1) {
         this.input1 = input1;
     }
 
-    public boolean getInput2() {
-        return input2;
-    }
-
+    /**
+     * Se establece el valor de la entrada 2 del componente
+     * @param input2 Valor booleano que tomará la entrada 2
+     */
     public void setInput2(boolean input2) {
         this.input2 = input2;
     }
 
+    /**
+     * Se retorna el valor del output del componente
+     * @return Valor booleano de la salida
+     */
     public boolean getOutput() {
         return output;
     }
 
-    public void setOutput(boolean output) {
-        this.output = output;
-    }
-
+    /**
+     * Se obtienen el ultimo numero de simulaciun en la que participo el componente
+     * @return Numero de la ultima simuacion en la que participo
+     */
     public double getLastCalculation() {
         return lastCalculation;
     }
 
+    /**
+     * Se establece el ultimo número de simulacion en la que participo el componente
+     * @param lastCalculation Numero de la ultima simuacion en la que participo
+     */
     public void setLastCalculation(double lastCalculation) {
         this.lastCalculation = lastCalculation;
     }
 
-    public Component(int inputs, Point outputCoords, Point inputCoordsl, Point inputCoords2, Image image, ComponentType type){
+    /**
+     * Constructor del componente
+     * @param inputs Cantidad de entradas
+     * @param outputCoords Coordenadas del tag de salida
+     * @param inputCoordsl Coordenadas del tag de entrada 1
+     * @param inputCoords2 Coordenadas del tag de entrada 2
+     * @param image Imagen del componente
+     * @param type Tipo de componente
+     */
+ public Component(int inputs, Point outputCoords, Point inputCoordsl, Point inputCoords2, Image image, ComponentType type){
         this.inputs=inputs;
         this.outputCoords=outputCoords;
         this.inputCoordsl=inputCoordsl;
@@ -79,7 +101,10 @@ public abstract class Component extends ImageView{
         this.lastCalculation=0;
     }
 
-    public void setUpLabels(){
+    /**
+     * Se crean los tags asociados al componente
+     */
+ public void setUpLabels(){
         AnchorPane parent=(AnchorPane) this.getParent();
         this.inputTag1=new InputTag(parent, inputCoordsl,this,1);
         this.outputTag=new OutputTag(parent, outputCoords,this);
@@ -89,18 +114,32 @@ public abstract class Component extends ImageView{
         this.updateTagsPositions();
     }
 
+    /**
+     * Se retorna el inputTag numero 1
+     * @return El InputTag1
+     */
     public InputTag getInputTag1() {
         return inputTag1;
     }
-
+    /**
+     * Se retorna el inputTag numero 2
+     * @return El InputTag2
+     */
     public InputTag getInputTag2() {
         return inputTag2;
     }
 
+    /**
+     * Se retorna el OutputTag
+     * @return El OutputTag
+     */
     public OutputTag getOutputTag() {
         return outputTag;
     }
 
+    /**
+     * Se devuelven los tags a sus posiciones base en el componente
+     */
     public void updateTagsPositions(){
         SuperTree.getInstance().disconnect(this);
         inputTag1.disconect();
@@ -111,6 +150,9 @@ public abstract class Component extends ImageView{
 
     }
 
+    /**
+     * Se destruye el componente y sus Tags
+     */
     public void destroy(){
         SuperTree.getInstance().remove(this);
         inputTag1.destroy();
@@ -121,20 +163,42 @@ public abstract class Component extends ImageView{
         ((AnchorPane)this.getParent()).getChildren().remove(this);
     }
 
+    /**
+     * Se calcula el valor booleano de output del componente
+     * @return El valor booleano de output
+     */
     abstract public boolean calculate();
 
-    public void setOutputTag(OutputTag outputTag) {
+    /**
+     * Se establece el OutputTag
+     * @param outputTag El OutputTag
+     */
+    private void setOutputTag(OutputTag outputTag) {
         this.outputTag = outputTag;
     }
 
-    public void setInputTag1(InputTag inputTag1) {
+    /**
+     * Se establece el InputTag1
+     * @param inputTag1 El InputTag1
+     */
+    private void setInputTag1(InputTag inputTag1) {
         this.inputTag1 = inputTag1;
     }
 
-    public void setInputTag2(InputTag inputTag2) {
+    /**
+     * Se establece el InputTag2
+     * @param inputTag2 El InputTag1
+     */
+    private void setInputTag2(InputTag inputTag2) {
         this.inputTag2 = inputTag2;
     }
 
+    /**
+     * Se retorna un clon del Componente
+     * @param parent El anchorPane que contendra al clon
+     * @param diplacement El desplazamiento del clon con respecto al cero
+     * @return Un clon del componente
+     */
     public Component clone(AnchorPane parent, Point diplacement){
         Component clone = Component_Factory.getComponent(this.type);
         parent.getChildren().add(clone);
@@ -148,7 +212,10 @@ public abstract class Component extends ImageView{
         return clone;
     }
 
-    public void setMovementHandlers() {
+    /**
+     * Se establece el manejo de acciones sobre el componente
+     */
+    private void setMovementHandlers() {
         Component component=this;
         this.setOnMousePressed( new EventHandler<MouseEvent>() {
             @Override

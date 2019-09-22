@@ -1,10 +1,22 @@
 package SimpleList;
 
+/**
+ * Clase que genera una lista simplemente enlazada
+ * @param <T> El tipo de dato almacenado en la lista
+ */
 public class List<T> {
     private Nodo first;
+
+    /**
+     * Constructor de la clase List
+     */
     public List()
     {}
 
+    /**
+     * Verifica si la lista esta vacia
+     * @return Booleano que indica si la lista esta vacia
+     */
     public boolean isEmpty()
     {
         boolean empty;
@@ -16,20 +28,10 @@ public class List<T> {
         return empty;
     }
 
-    public boolean isContained(T element){
-        Nodo nodo= this.first;
-        boolean found =false;
-
-        while(nodo!=null && !found){
-            if(nodo.getElement().equals(element) ){
-                found = true;
-            }else{
-                nodo = nodo.getNext();
-            }
-        }
-        return found;
-
-    }
+    /**
+     * Metodo que introduce un nuevo elemento al final de la lista
+     * @param element Elemento a introducir
+     */
     public void addEnd(T element)
     {
         boolean added= false;
@@ -49,6 +51,10 @@ public class List<T> {
         }
     }
 
+    /**
+     * Metodo que introduce un elemento al inicio de la lista
+     * @param element Elemento a introducir
+     */
     public void addStart(T element)
     {
         Nodo nodo = new Nodo(element);
@@ -56,6 +62,10 @@ public class List<T> {
         this.first = nodo;
     }
 
+    /**
+     * Metodo que introduce una lista al final de la lista
+     * @param list Lista a introducir
+     */
     public void addAll(List<T> list){
         boolean added= false;
         Nodo nodo = this.first;
@@ -80,6 +90,11 @@ public class List<T> {
         }
     }
 
+    /**
+     * Metodo que retorna el i-esimo elemento de la lista
+     * @param index Posicion en la lista
+     * @return Elemento de la lista
+     */
     public T get(int index) {
         int counter = 0;
         Nodo<T> nodo = this.first;
@@ -93,6 +108,11 @@ public class List<T> {
             return null;
         }
     }
+
+    /**
+     * Metodo que convierte la lista en string
+     * @return String
+     */
     public String toString()
     {
         String string = "";
@@ -104,6 +124,10 @@ public class List<T> {
         return string;
     }
 
+    /**
+     * Metodo que retorna el tamano de la lista
+     * @return Tamano de la lista
+     */
     public int count()
     {
         int counter = 0;
@@ -115,6 +139,11 @@ public class List<T> {
         return counter;
     }
 
+    /**
+     * Devuelve la posicion de la primera aparicion del elemento en la lista
+     * @param element Elemento a buscar
+     * @return Posicion del elemento
+     */
     public int getFirst(T element)
     {
         int position = 0;
@@ -137,6 +166,11 @@ public class List<T> {
 
     }
 
+    /**
+     *  Metodo que elimina el elemento de la lista
+     * @param element Elemento a eliminar
+     * @return Booleano que indica si se elimino el elemento
+     */
     public boolean delete(T element)
     {
         Nodo nodoAnterior= this.first;

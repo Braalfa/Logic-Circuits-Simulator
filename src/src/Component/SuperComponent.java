@@ -15,12 +15,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import SuperList.*;
 import Tags.*;
-import Component.*;
 import javax.imageio.ImageIO;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Esta clase se encarga de contener los componentes personalizados, guardados por el usuario
+ */
 public class SuperComponent extends Label {
     private SuperTree clone;
     private ObservableList<Node> elements;
@@ -30,6 +32,11 @@ public class SuperComponent extends Label {
     private ObservableList<Node> elementsClone;
     private SuperTree cloneClone;
 
+    /**
+     * Constructor de SuperComponent
+     * @param name Nombre del super componente
+     * @param parent Parent en donde se encuentra el super componente
+     */
     public SuperComponent(String name, Parent parent) {
         AnchorPane copyPane = new AnchorPane();
         copyPane.setPrefHeight(800);
@@ -43,6 +50,11 @@ public class SuperComponent extends Label {
         this.updatePositions();
     }
 
+    /**
+     * Este método genera una copia de si mismo, para entregarla a quien necesite
+     * @param parent AnchorPane donde se encontrara el super componente
+     * @param diplacement Desplazamiento del super componente en su parent
+     */
     public void generate(AnchorPane parent, Point diplacement){
         this.cloneClone= clone.clone(parent, diplacement);
         this.elementsClone=parent.getChildren();
@@ -51,7 +63,9 @@ public class SuperComponent extends Label {
     }
 
 
-
+    /**
+     * Este método establece el inicio de coordenadas del super componente en su parte superior izquierda
+     */
     public void updatePositions(){
         int newCeroX= (int)this.bounds.getMinX();
         int newCeroY=(int)this.bounds.getMinY();
@@ -75,7 +89,13 @@ public class SuperComponent extends Label {
         }
     }
 
-    public File saveImageAsPng(String name, Parent parent) {
+    /**
+     * Este método genera y guarda la imagen del supercomponente en memoria
+     * @param name Nombre del super componente
+     * @param parent Padre del super componente
+     * @return Archivo de imagen
+     */
+    private  File saveImageAsPng(String name, Parent parent) {
         SnapshotParameters snapshotParameters= new SnapshotParameters();
         snapshotParameters.setViewport(this.getBounds());
         snapshotParameters.setFill(Color.TRANSPARENT);
@@ -92,16 +112,31 @@ public class SuperComponent extends Label {
         }
     }
 
-    public void setImage(String name, Parent parent) {
+    /**
+     * Este método establece la imagen del super componente
+     * @param name Nombre del super componente
+     * @param parent Padre del super componente
+     */
+    private void setImage(String name, Parent parent) {
         File file=this.saveImageAsPng(name, parent);
         this.image= new Image(file.toURI().toString());
     }
 
+    /**
+     * Retorna la imagen del super componente
+     * @return Imagen del super componente
+     */
     public Image getImage() {
         return image;
     }
 
-    public void setBounds(int maxXParent, int maxYParent, ObservableList<Node> elements){
+    /**
+     * Establece las coordenadas del rectángulo que comparte coordenadas con el super componente
+     * @param maxXParent Altura del padre
+     * @param maxYParent Ancho del padre
+     * @param elements Nodos del super componente
+     */
+    private void setBounds(int maxXParent, int maxYParent, ObservableList<Node> elements){
         int minX=maxXParent;
         int minY=maxYParent;
         int maxX=0;
@@ -137,17 +172,18 @@ public class SuperComponent extends Label {
         this.bounds= new Rectangle2D(minX,minY,maxX-minX,maxY-minY);
     }
 
+    /**
+     * Se retorna la lista de NodoComponentes sin output de la última copia del super componente guardado
+     * @return Lista de NodoComponentes sin salida del super componente
+     */
     public List<NodoComponent> getOutputs() {
         return cloneClone.getOutputComponents();
     }
-    public SuperTree getClone() {
-        return clone;
-    }
 
-    public ObservableList<Node> getElements() {
-        return elementsClone;
-    }
-
+    /**
+     * Se retornan los limites del rectangulo en donde se encontraba el super componente
+     * @return Rectangulo con los limites del super componente
+     */
     public Rectangle2D getBounds() {
         return bounds;
     }
